@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Last Third Of The Night</string>
+    <string name="time_format">24 hour mode</string>
+    <string name="action_about_us">About us</string>
+    <string name="time_mode_24">"24 hour mode"</string>
+    <string name="time_mode_pm">"PM mode"</string>
+</resources>

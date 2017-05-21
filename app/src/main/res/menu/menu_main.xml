@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.ibnshahid.lastthird.MainActivity">
+    <item
+        android:id="@+id/time_mode"
+        android:title="@string/time_format"
+        app:showAsAction="never"
+        app:actionViewClass="Button"
+        />
+    <item
+        android:id="@+id/about_us"
+        android:title="@string/action_about_us"
+        app:showAsAction="never" />
+</menu>
+    <!--android:orderInCategory="100"-->
