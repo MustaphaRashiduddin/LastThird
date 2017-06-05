@@ -32,15 +32,11 @@ public class AlarmService extends Service {
 
         if (ACTION_DISMISS.equals(action)) {
             dismissAlarm();
-            NotificationManager notificationManager= (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.cancel(2);
         } else {
-            Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-
-            if (uri == null) uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-            ringtone = RingtoneManager.getRingtone(this, uri);
-            ringtone.play();
+            Intent alarm_intent = new Intent(this, AlarmActivity.class);
+            startActivity(alarm_intent);
         }
 
         return START_NOT_STICKY;
@@ -51,7 +47,6 @@ public class AlarmService extends Service {
         stopService(intent);
 
         intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-
         PendingIntent pendingIntent =
                 PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);

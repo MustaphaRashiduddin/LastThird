@@ -7,21 +7,23 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener {
 
     private TextView fajrDisplay = null;
     private TextView maghribDisplay = null;
@@ -34,6 +36,27 @@ public class MainActivity extends AppCompatActivity {
     private PendingIntent pendingIntent = null;
     private Intent intent = null;
     AlarmManager alarmManager = null;
+
+//    when manually setting the time within the constraints of the last third of the night and isha time
+    @Override
+    public void onTimeSet(com.wdullaer.materialdatetimepicker.time.TimePickerDialog view, int hourOfDay, int minute, int second) {
+        intent = new Intent(MainActivity.this, AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, calGetup.getTimeInMillis(), pendingIntent);
+        Calendar getup = Calendar.getInstance();
+        getup.setTimeInMillis(calGetup.getTimeInMillis());
+        getup.add(Calendar.HOUR_OF_DAY, hourOfDay - calGetup.get(Calendar.HOUR_OF_DAY));
+        getup.add(Calendar.MINUTE, minute - calGetup.get(Calendar.MINUTE));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(0, getup.getTimeInMillis(), pendingIntent);
+        } else {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
+                    getup.getTimeInMillis(), pendingIntent);
+        }
+        createNotification(getApplicationContext(), getup);
+    }
 
     interface GetTimeInterface {
         String fn(Calendar cal);
@@ -66,19 +89,45 @@ public class MainActivity extends AppCompatActivity {
         Button btnAlarm = (Button) findViewById(R.id.btn_set_alarm);
         btnAlarm.setOnClickListener(v -> {
 
-            intent = new Intent(MainActivity.this, AlarmReceiver.class);
-            pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+            if (calGetup.get(Calendar.HOUR_OF_DAY) > 5)
+                Toast.makeText(this, "maghrib and fajr time configurations not possible", Toast.LENGTH_SHORT).show();
+            else {
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                alertDialog.setTitle("Alarm");
+                alertDialog.setMessage("Do you want the system to set the time or yourself manually?");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "AUTOMATIC",
+                        (dialog, which) -> {
+                            intent = new Intent(MainActivity.this, AlarmReceiver.class);
+                            pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
 
-            alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC, calGetup.getTimeInMillis(), pendingIntent);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(),
-                    fajrTime.getTimeInMillis() - calGetup.getTimeInMillis(), pendingIntent);
+                            alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                            alarmManager.set(AlarmManager.RTC, calGetup.getTimeInMillis(), pendingIntent);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                            alarmManager.setExact(0, calGetup.getTimeInMillis(), pendingIntent);
+                                alarmManager.setExact(0, 0, pendingIntent);
+                            } else {
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
+                                        calGetup.getTimeInMillis(), pendingIntent);
+                            }
 
-            createNotification(getApplicationContext());
+                            createNotification(getApplicationContext(), calGetup);
+                        });
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "MANUAL",
+                        (dialog, which) -> {
+                            com.wdullaer.materialdatetimepicker.time.TimePickerDialog manual =
+                                    com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(this,
+                                            calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE),
+                                            getTime.equals(getTime24));
+                            manual.setMinTime(calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE), 0);
+                            manual.setMaxTime(fajrTime.get(Calendar.HOUR_OF_DAY), fajrTime.get(Calendar.MINUTE), 0);
+                            manual.show(getFragmentManager(), "Timepickerdialog");
+                        });
+                alertDialog.show();
+            }
         });
 
         Button btnCancelAlarm = (Button) findViewById(R.id.btn_cancel_alarm);
-//        btnCancelAlarm.setOnClickListener(v -> {
+        btnCancelAlarm.setOnClickListener(v -> {
 //            Intent i = new Intent(getApplicationContext(), AlarmService.class);
 //            stopService(i);
 //
@@ -88,16 +137,26 @@ public class MainActivity extends AppCompatActivity {
 //            alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 //
 //            alarmManager.cancel(pendingIntent);
-//        });
-        btnCancelAlarm.setVisibility(View.INVISIBLE);
+
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("Alert message to be shown");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "AUTOMATIC",
+                    (dialog, which) -> dialog.dismiss());
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "MANUAL",
+                    (dialog, which) -> dialog.dismiss());
+            alertDialog.show();
+
+        });
+//        btnCancelAlarm.setVisibility(View.INVISIBLE);
 
     }
 
-    private void createNotification(Context context) {
+    private void createNotification(Context context, Calendar time) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.notifcation)
                 .setContentTitle("Tahajjud alarm set")
-                .setContentText(getTime.fn(calGetup))
+                .setContentText(getTime.fn(time))
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
         Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -178,6 +237,8 @@ public class MainActivity extends AppCompatActivity {
         fajrTime.set(Calendar.MINUTE, minute);
         fajrTime.add(Calendar.DATE, 1);
         fajrDisplay.setText(getTime.fn(fajrTime));
+
+        FajrTime.getInstance().time = fajrTime;
     };
 
     TimePickerDialog.OnTimeSetListener maghribOnTimeSetListener = (view, hourOfDay, minute) -> {
@@ -197,7 +258,6 @@ public class MainActivity extends AppCompatActivity {
         return dateFormat.format(cal.getTime());
     };
 
-
     void setAllTimeTextViews() {
         fajrDisplay.setText(getTime.fn(fajrTime));
         maghribDisplay.setText(getTime.fn(maghribTime));
@@ -216,7 +276,6 @@ public class MainActivity extends AppCompatActivity {
         calGetup.setTimeInMillis(getup);
 
         tvLastThird.setText(getTime.fn(calGetup));
-
     }
 
 }
