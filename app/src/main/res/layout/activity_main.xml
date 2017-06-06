@@ -34,10 +34,10 @@
         />
 
     <Button
-        android:id="@+id/btn_last_third"
+        android:id="@+id/btn_set_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Calculate the last third"/>
+        android:text="set alarm"/>
 
     <TextView
         android:id="@+id/tv_last_third"
@@ -46,15 +46,14 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Button
-        android:id="@+id/btn_set_alarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="set alarm"/>
-
-    <Button
         android:id="@+id/btn_cancel_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="cancel alarm"/>
 
 </LinearLayout>
+<!--<Button-->
+<!--android:id="@+id/btn_last_third"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:text="Calculate the last third"/>-->

@@ -48,10 +48,10 @@ public class AlarmActivity extends AppCompatActivity {
         snooze.setOnClickListener(v -> {
             Toast.makeText(this, "implement", Toast.LENGTH_SHORT).show();
 //            cancel();
+            //TODO snooze implementation
         });
 
         long timeleft = FajrTime.getInstance().time.getTimeInMillis() - System.currentTimeMillis();
-
         countdown = (TextView) findViewById(R.id.countdown);
         new CountDownTimer(timeleft, 1000) {
 

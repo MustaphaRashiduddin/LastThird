@@ -1,5 +1,6 @@
 package com.example.ibnshahid.lastthird;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -7,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -30,14 +32,28 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     private TextView tvLastThird = null;
     private Calendar fajrTime = Calendar.getInstance();
     private Calendar maghribTime = Calendar.getInstance();
-    Calendar calGetup = Calendar.getInstance();
-    MenuItem miTimeMode = null;
+    private Calendar calGetup = Calendar.getInstance();
+    private MenuItem miTimeMode = null;
 
     private PendingIntent pendingIntent = null;
     private Intent intent = null;
     AlarmManager alarmManager = null;
+    com.wdullaer.materialdatetimepicker.time.TimePickerDialog manual = null;
 
-//    when manually setting the time within the constraints of the last third of the night and isha time
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("fajr", fajrDisplay.getText().toString());
+        editor.putString("maghrib", maghribDisplay.getText().toString());
+        editor.putString("alarm", tvLastThird.getText().toString());
+        editor.putLong("fajrMillis", fajrTime.getTimeInMillis());
+        editor.putLong("maghribMillis", maghribTime.getTimeInMillis());
+        editor.commit();
+    }
+
+    //    when manually setting the time within the constraints of the last third of the night and isha time
     @Override
     public void onTimeSet(com.wdullaer.materialdatetimepicker.time.TimePickerDialog view, int hourOfDay, int minute, int second) {
         intent = new Intent(MainActivity.this, AlarmReceiver.class);
@@ -68,27 +84,31 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         getTime = getTime12;
+
+        SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
+        fajrTime.setTimeInMillis(sp.getLong("fajrMillis", 0));
+        maghribTime.setTimeInMillis(sp.getLong("maghribMillis", 0));
 
 
         fajrDisplay = (TextView) findViewById(R.id.tv_show_fajr_time);
         Button fajrDisplayTPDButton = (Button) findViewById(R.id.btn_pic_fajr_time);
         fajrDisplayTPDButton.setOnClickListener(v -> new TimePickerDialog(MainActivity.this, fajrOnTimeSetListener, 5,
                 0, getTime.equals(getTime24)).show());
+        fajrDisplay.setText(sp.getString("fajr", "NOT SET"));
 
         maghribDisplay = (TextView) findViewById(R.id.tv_show_maghrib_time);
         Button maghribDisplayTPDButton = (Button) findViewById(R.id.btn_pic_maghrib_time);
         maghribDisplayTPDButton.setOnClickListener(v -> new TimePickerDialog(MainActivity.this, maghribOnTimeSetListener, 18,
                 0, getTime.equals(getTime24)).show());
+        maghribDisplay.setText(sp.getString("maghrib", "NOT SET"));
 
-        Button btnLastThird = (Button) findViewById(R.id.btn_last_third);
-        btnLastThird.setOnClickListener(v -> calcLastThird());
         tvLastThird = (TextView) findViewById(R.id.tv_last_third);
+        tvLastThird.setText(sp.getString("alarm", "Alarm not set"));
 
         Button btnAlarm = (Button) findViewById(R.id.btn_set_alarm);
         btnAlarm.setOnClickListener(v -> {
-
+            calcLastThird();
             if (calGetup.get(Calendar.HOUR_OF_DAY) > 5)
                 Toast.makeText(this, "maghrib and fajr time configurations not possible", Toast.LENGTH_SHORT).show();
             else {
@@ -114,13 +134,13 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
                         });
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "MANUAL",
                         (dialog, which) -> {
-                            com.wdullaer.materialdatetimepicker.time.TimePickerDialog manual =
-                                    com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(this,
+                            manual = com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(this,
                                             calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE),
                                             getTime.equals(getTime24));
                             manual.setMinTime(calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE), 0);
                             manual.setMaxTime(fajrTime.get(Calendar.HOUR_OF_DAY), fajrTime.get(Calendar.MINUTE), 0);
                             manual.show(getFragmentManager(), "Timepickerdialog");
+                            manual.dismissOnPause(true);
                         });
                 alertDialog.show();
             }
@@ -153,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     }
 
     private void createNotification(Context context, Calendar time) {
+        tvLastThird.setText("Alarm set for " + getTime.fn(time));
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.notifcation)
                 .setContentTitle("Tahajjud alarm set")
@@ -174,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = builder.build();
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+//        notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(2, notification);
     }
 
@@ -274,8 +295,6 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         calGetup = Calendar.getInstance();
 
         calGetup.setTimeInMillis(getup);
-
-        tvLastThird.setText(getTime.fn(calGetup));
     }
 
 }
