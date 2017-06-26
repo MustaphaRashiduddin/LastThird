@@ -45,9 +45,6 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         super.onStop();
         SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString("fajr", fajrDisplay.getText().toString());
-        editor.putString("maghrib", maghribDisplay.getText().toString());
-        editor.putString("alarm", tvLastThird.getText().toString());
         editor.putLong("fajrMillis", fajrTime.getTimeInMillis());
         editor.putLong("maghribMillis", maghribTime.getTimeInMillis());
         editor.commit();
@@ -57,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     @Override
     public void onTimeSet(com.wdullaer.materialdatetimepicker.time.TimePickerDialog view, int hourOfDay, int minute, int second) {
         intent = new Intent(MainActivity.this, AlarmReceiver.class);
+        // TODO fix time
         pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -80,6 +78,21 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
 
     GetTimeInterface getTime = null;
 
+    long fajrInstance() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 6);
+        cal.set(Calendar.MINUTE, 0);
+        return cal.getTimeInMillis();
+    }
+
+    long maghribInstance() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 20);
+        cal.set(Calendar.MINUTE, 0);
+        return cal.getTimeInMillis();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,24 +100,33 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         getTime = getTime12;
 
         SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
-        fajrTime.setTimeInMillis(sp.getLong("fajrMillis", 0));
-        maghribTime.setTimeInMillis(sp.getLong("maghribMillis", 0));
+        fajrTime.setTimeInMillis(sp.getLong("fajrMillis", fajrInstance()));
+        Calendar tempMaghrib = Calendar.getInstance();
+        tempMaghrib.setTimeInMillis(sp.getLong("maghribMillis", maghribInstance()));
 
+        FajrTime.getInstance().time = Calendar.getInstance();
+        FajrTime.getInstance().time.add(Calendar.DATE, 1);
+        FajrTime.getInstance().time.set(Calendar.HOUR_OF_DAY, fajrTime.get(Calendar.HOUR_OF_DAY));
+        FajrTime.getInstance().time.set(Calendar.MINUTE, fajrTime.get(Calendar.MINUTE));
+
+        maghribTime = Calendar.getInstance();
+        maghribTime.set(Calendar.HOUR_OF_DAY, tempMaghrib.get(Calendar.HOUR_OF_DAY));
+        maghribTime.set(Calendar.MINUTE, tempMaghrib.get(Calendar.MINUTE));
 
         fajrDisplay = (TextView) findViewById(R.id.tv_show_fajr_time);
         Button fajrDisplayTPDButton = (Button) findViewById(R.id.btn_pic_fajr_time);
-        fajrDisplayTPDButton.setOnClickListener(v -> new TimePickerDialog(MainActivity.this, fajrOnTimeSetListener, 5,
-                0, getTime.equals(getTime24)).show());
-        fajrDisplay.setText(sp.getString("fajr", "NOT SET"));
+        fajrDisplayTPDButton.setOnClickListener(v -> new TimePickerDialog(MainActivity.this, fajrOnTimeSetListener, fajrTime.get(Calendar.HOUR_OF_DAY),
+                fajrTime.get(Calendar.MINUTE), getTime.equals(getTime24)).show());
+        fajrDisplay.setText(getTime.fn(FajrTime.getInstance().time));
 
         maghribDisplay = (TextView) findViewById(R.id.tv_show_maghrib_time);
         Button maghribDisplayTPDButton = (Button) findViewById(R.id.btn_pic_maghrib_time);
-        maghribDisplayTPDButton.setOnClickListener(v -> new TimePickerDialog(MainActivity.this, maghribOnTimeSetListener, 18,
-                0, getTime.equals(getTime24)).show());
-        maghribDisplay.setText(sp.getString("maghrib", "NOT SET"));
+        maghribDisplayTPDButton.setOnClickListener(v -> new TimePickerDialog(MainActivity.this, maghribOnTimeSetListener, maghribTime.get(Calendar.HOUR_OF_DAY),
+                maghribTime.get(Calendar.MINUTE), getTime.equals(getTime24)).show());
+        maghribDisplay.setText(getTime.fn(maghribTime));
 
         tvLastThird = (TextView) findViewById(R.id.tv_last_third);
-        tvLastThird.setText(sp.getString("alarm", "Alarm not set"));
+        tvAlarmUnset();
 
         Button btnAlarm = (Button) findViewById(R.id.btn_set_alarm);
         btnAlarm.setOnClickListener(v -> {
@@ -148,27 +170,20 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
 
         Button btnCancelAlarm = (Button) findViewById(R.id.btn_cancel_alarm);
         btnCancelAlarm.setOnClickListener(v -> {
-//            Intent i = new Intent(getApplicationContext(), AlarmService.class);
-//            stopService(i);
-//
-//            intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-//
-//            pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
-//            alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//
-//            alarmManager.cancel(pendingIntent);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.cancel(2);
+            Intent intent = new Intent(this, AlarmService.class);
+            stopService(intent);
 
-            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-            alertDialog.setTitle("Alert");
-            alertDialog.setMessage("Alert message to be shown");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "AUTOMATIC",
-                    (dialog, which) -> dialog.dismiss());
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "MANUAL",
-                    (dialog, which) -> dialog.dismiss());
-            alertDialog.show();
+            intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+            PendingIntent pendingIntent =
+                    PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
+            alarmManager.cancel(pendingIntent);
+
+            tvAlarmUnset();
         });
-//        btnCancelAlarm.setVisibility(View.INVISIBLE);
 
     }
 
@@ -282,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     void setAllTimeTextViews() {
         fajrDisplay.setText(getTime.fn(fajrTime));
         maghribDisplay.setText(getTime.fn(maghribTime));
+        tvLastThird.setText("Alarm set for " + getTime.fn(calGetup));
         calcLastThird();
     }
 
@@ -295,6 +311,10 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         calGetup = Calendar.getInstance();
 
         calGetup.setTimeInMillis(getup);
+    }
+
+    void tvAlarmUnset() {
+        tvLastThird.setText("Alarm not set");
     }
 
 }
