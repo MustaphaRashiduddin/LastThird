@@ -8,11 +8,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 /**
  * Created by ibnShahid on 06/05/2017.
@@ -32,15 +29,16 @@ public class AlarmService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
 
+        // persisting notification state
+        SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("alarmSet", false);
+        editor.commit();
+
         if (ACTION_DISMISS.equals(action)) {
             dismissAlarm();
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.cancel(2);
-            // persisting notification state
-            SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putBoolean("alarmSet", false);
-            editor.commit();
         } else {
             Intent alarm_intent = new Intent(this, AlarmActivity.class);
             startActivity(alarm_intent);

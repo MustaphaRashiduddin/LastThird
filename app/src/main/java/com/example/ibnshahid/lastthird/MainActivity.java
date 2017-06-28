@@ -95,13 +95,15 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         return cal.getTimeInMillis();
     }
 
+    SharedPreferences sp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getTime = getTime12;
 
-        SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
+        sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
         fajrTime.setTimeInMillis(sp.getLong("fajrMillis", fajrInstance()));
         Calendar tempMaghrib = Calendar.getInstance();
         tempMaghrib.setTimeInMillis(sp.getLong("maghribMillis", maghribInstance()));
@@ -235,6 +237,16 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("alarmSet", true);
         editor.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        alarmSet = sp.getBoolean("alarmSet", false);
+        if (alarmSet)
+            Toast.makeText(this, "alarm is set", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, "alarm not set", Toast.LENGTH_SHORT).show();
     }
 
     @Override
