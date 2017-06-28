@@ -1,10 +1,12 @@
 package com.example.ibnshahid.lastthird;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -34,6 +36,11 @@ public class AlarmService extends Service {
             dismissAlarm();
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.cancel(2);
+            // persisting notification state
+            SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("alarmSet", false);
+            editor.commit();
         } else {
             Intent alarm_intent = new Intent(this, AlarmActivity.class);
             startActivity(alarm_intent);

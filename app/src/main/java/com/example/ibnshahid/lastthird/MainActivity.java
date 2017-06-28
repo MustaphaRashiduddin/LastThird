@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     AlarmManager alarmManager = null;
     com.wdullaer.materialdatetimepicker.time.TimePickerDialog manual = null;
 
+    public boolean alarmSet = false;
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -104,6 +106,13 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         Calendar tempMaghrib = Calendar.getInstance();
         tempMaghrib.setTimeInMillis(sp.getLong("maghribMillis", maghribInstance()));
 
+        // get alarm status
+        alarmSet = sp.getBoolean("alarmSet", false);
+        if (alarmSet)
+            Toast.makeText(this, "alarm is set", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, "alarm not set", Toast.LENGTH_SHORT).show();
+
         FajrTime.getInstance().time = Calendar.getInstance();
         FajrTime.getInstance().time.add(Calendar.DATE, 1);
         FajrTime.getInstance().time.set(Calendar.HOUR_OF_DAY, fajrTime.get(Calendar.HOUR_OF_DAY));
@@ -131,8 +140,10 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         Button btnAlarm = (Button) findViewById(R.id.btn_set_alarm);
         btnAlarm.setOnClickListener(v -> {
             calcLastThird();
-            if (calGetup.get(Calendar.HOUR_OF_DAY) > 5)
+            if (calGetup.get(Calendar.HOUR_OF_DAY) > 5) {
                 Toast.makeText(this, "maghrib and fajr time configurations not possible", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "" + getTime.fn(calGetup), Toast.LENGTH_SHORT).show();
+            }
             else {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
                 alertDialog.setTitle("Alarm");
@@ -172,6 +183,12 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         btnCancelAlarm.setOnClickListener(v -> {
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.cancel(2);
+
+            // persisting notification state
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("alarmSet", false);
+            editor.commit();
+
             Intent intent = new Intent(this, AlarmService.class);
             stopService(intent);
 
@@ -212,6 +229,12 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         Notification notification = builder.build();
 //        notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(2, notification);
+
+        // persisting notification state
+        SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("alarmSet", true);
+        editor.commit();
     }
 
     @Override
@@ -302,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     }
 
     void calcLastThird() {
-        long end = fajrTime.getTimeInMillis();
+        long end = FajrTime.time.getTimeInMillis();
         long begin = maghribTime.getTimeInMillis();
 
         long third = (end - begin)/3;
