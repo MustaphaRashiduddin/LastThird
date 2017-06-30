@@ -66,10 +66,20 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         getup.add(Calendar.HOUR_OF_DAY, hourOfDay - calGetup.get(Calendar.HOUR_OF_DAY));
         getup.add(Calendar.MINUTE, minute - calGetup.get(Calendar.MINUTE));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(0, getup.getTimeInMillis(), pendingIntent);
+//            alarmManager.setExact(0, getup.getTimeInMillis(), pendingIntent);
+            Toast.makeText(this, "presa", Toast.LENGTH_SHORT).show();
+//            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
+//                    calGetup.getTimeInMillis(), pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(),
+                    calGetup.getTimeInMillis(), pendingIntent);
         } else {
+//            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
+//                    getup.getTimeInMillis(), pendingIntent);
+            Toast.makeText(this, "samosas", Toast.LENGTH_SHORT).show();
+//            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
+//                    calGetup.getTimeInMillis(), pendingIntent);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
-                    getup.getTimeInMillis(), pendingIntent);
+                    calGetup.getTimeInMillis(), pendingIntent);
         }
         createNotification(getApplicationContext(), getup);
     }
@@ -108,12 +118,6 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         Calendar tempMaghrib = Calendar.getInstance();
         tempMaghrib.setTimeInMillis(sp.getLong("maghribMillis", maghribInstance()));
 
-        // get alarm status
-        alarmSet = sp.getBoolean("alarmSet", false);
-        if (alarmSet)
-            Toast.makeText(this, "alarm is set", Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(this, "alarm not set", Toast.LENGTH_SHORT).show();
 
         FajrTime.getInstance().time = Calendar.getInstance();
         FajrTime.getInstance().time.add(Calendar.DATE, 1);
@@ -139,6 +143,13 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         tvLastThird = (TextView) findViewById(R.id.tv_last_third);
         tvAlarmUnset();
 
+        // get alarm status
+        if (alarmSet) {
+            tvLastThird.setText("Alarm set for " + getTime.fn(calGetup));
+        } else {
+            tvLastThird.setText("Alarm not set");
+        }
+
         Button btnAlarm = (Button) findViewById(R.id.btn_set_alarm);
         btnAlarm.setOnClickListener(v -> {
             calcLastThird();
@@ -158,9 +169,11 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
                             alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                             alarmManager.set(AlarmManager.RTC, calGetup.getTimeInMillis(), pendingIntent);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                Toast.makeText(this, "automatic alarm", Toast.LENGTH_SHORT).show();
 //                            alarmManager.setExact(0, calGetup.getTimeInMillis(), pendingIntent);
                                 alarmManager.setExact(0, 0, pendingIntent);
                             } else {
+                                Toast.makeText(this, "manual alarm", Toast.LENGTH_SHORT).show();
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
                                         calGetup.getTimeInMillis(), pendingIntent);
                             }
@@ -243,10 +256,11 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     protected void onResume() {
         super.onResume();
         alarmSet = sp.getBoolean("alarmSet", false);
-        if (alarmSet)
-            Toast.makeText(this, "alarm is set", Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(this, "alarm not set", Toast.LENGTH_SHORT).show();
+        if (alarmSet) {
+            tvLastThird.setText("Alarm set for " + getTime.fn(calGetup));
+        } else {
+            tvLastThird.setText("Alarm not set");
+        }
     }
 
     @Override
