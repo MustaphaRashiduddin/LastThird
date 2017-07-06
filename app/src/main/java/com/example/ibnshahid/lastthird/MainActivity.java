@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -56,31 +57,19 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     @Override
     public void onTimeSet(com.wdullaer.materialdatetimepicker.time.TimePickerDialog view, int hourOfDay, int minute, int second) {
         intent = new Intent(MainActivity.this, AlarmReceiver.class);
-        // TODO fix time
         pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, calGetup.getTimeInMillis(), pendingIntent);
         Calendar getup = Calendar.getInstance();
-        getup.setTimeInMillis(calGetup.getTimeInMillis());
-        getup.add(Calendar.HOUR_OF_DAY, hourOfDay - calGetup.get(Calendar.HOUR_OF_DAY));
-        getup.add(Calendar.MINUTE, minute - calGetup.get(Calendar.MINUTE));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            alarmManager.setExact(0, getup.getTimeInMillis(), pendingIntent);
-            Toast.makeText(this, "presa", Toast.LENGTH_SHORT).show();
-//            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
-//                    calGetup.getTimeInMillis(), pendingIntent);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(),
-                    calGetup.getTimeInMillis(), pendingIntent);
-        } else {
-//            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
-//                    getup.getTimeInMillis(), pendingIntent);
-            Toast.makeText(this, "samosas", Toast.LENGTH_SHORT).show();
-//            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
-//                    calGetup.getTimeInMillis(), pendingIntent);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
-                    calGetup.getTimeInMillis(), pendingIntent);
-        }
+        getup.set(Calendar.YEAR, FajrTime.time.get(Calendar.YEAR));
+        getup.set(Calendar.DAY_OF_MONTH, FajrTime.time.get(Calendar.DAY_OF_MONTH));
+        getup.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        getup.set(Calendar.MINUTE, minute);
+        // cal_log(getup);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, getup.getTimeInMillis(), pendingIntent);
+        else
+            alarmManager.set(AlarmManager.RTC_WAKEUP, getup.getTimeInMillis(), pendingIntent);
         createNotification(getApplicationContext(), getup);
     }
 
@@ -155,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
             calcLastThird();
             if (calGetup.get(Calendar.HOUR_OF_DAY) > 5) {
                 Toast.makeText(this, "maghrib and fajr time configurations not possible", Toast.LENGTH_SHORT).show();
-//                Toast.makeText(this, "" + getTime.fn(calGetup), Toast.LENGTH_SHORT).show();
+                // Toast.makeText(this, "" + getTime.fn(calGetup), Toast.LENGTH_SHORT).show();
             }
             else {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
@@ -165,18 +154,11 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
                         (dialog, which) -> {
                             intent = new Intent(MainActivity.this, AlarmReceiver.class);
                             pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-
                             alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                            alarmManager.set(AlarmManager.RTC, calGetup.getTimeInMillis(), pendingIntent);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                Toast.makeText(this, "automatic alarm", Toast.LENGTH_SHORT).show();
-//                            alarmManager.setExact(0, calGetup.getTimeInMillis(), pendingIntent);
-                                alarmManager.setExact(0, 0, pendingIntent);
-                            } else {
-                                Toast.makeText(this, "manual alarm", Toast.LENGTH_SHORT).show();
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
-                                        calGetup.getTimeInMillis(), pendingIntent);
-                            }
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
+                            else
+                                alarmManager.set(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
 
                             createNotification(getApplicationContext(), calGetup);
                         });
@@ -230,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
 
-//         To add a dismiss button
+        // To add a dismiss button
         Intent dismissIntent = new Intent(context, AlarmService.class);
         dismissIntent.setAction(AlarmService.ACTION_DISMISS);
         PendingIntent cancelPendingIntent = PendingIntent.getService(context, 1, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -242,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = builder.build();
-//        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        // notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(2, notification);
 
         // persisting notification state
@@ -353,13 +335,17 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     void calcLastThird() {
         long end = FajrTime.time.getTimeInMillis();
         long begin = maghribTime.getTimeInMillis();
-
         long third = (end - begin)/3;
-        long getup = fajrTime.getTimeInMillis() - third;
-
+        long getup = FajrTime.time.getTimeInMillis() - third;
         calGetup = Calendar.getInstance();
-
         calGetup.setTimeInMillis(getup);
+    }
+
+    void cal_log(Calendar c) {
+        Log.e("year", "" + c.get(Calendar.YEAR));
+        Log.e("month", ""+c.get(Calendar.MONTH));
+        Log.e("day of month", "" + c.get(Calendar.DAY_OF_MONTH));
+        Log.e("time: ", "" + getTime.fn(c));
     }
 
     void tvAlarmUnset() {
