@@ -5,9 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
@@ -20,10 +18,10 @@ import java.util.Calendar;
 
 public class AlarmActivity extends AppCompatActivity {
 
-    private Ringtone ringtone;
     private Button cancel;
     private Button snooze;
     private TextView countdown;
+    private MediaPlayer player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +30,10 @@ public class AlarmActivity extends AppCompatActivity {
 
         dismissNotification(this);
 
-        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-
-        if (uri == null) uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-        ringtone = RingtoneManager.getRingtone(this, uri);
-        ringtone.play();
+        int resID = getResources().getIdentifier("alarm", "raw", getPackageName());
+        player = MediaPlayer.create(this, resID);
+        player.setLooping(true);
+        player.start();
 
         cancel = (Button) findViewById(R.id.btn_cancel);
         cancel.setOnClickListener(v -> {
@@ -72,7 +68,7 @@ public class AlarmActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (ringtone != null) cancel();
+        if (player != null) cancel();
     }
 
     private void cancel() {
@@ -86,8 +82,10 @@ public class AlarmActivity extends AppCompatActivity {
 
         alarmManager.cancel(pendingIntent);
 
-        if (ringtone != null) ringtone.stop();
-
+        if (player != null) {
+            player.stop();
+            player.release();
+        }
     }
 
     private void dismissNotification(Context context) {
