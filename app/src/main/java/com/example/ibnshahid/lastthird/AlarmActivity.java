@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -22,11 +23,17 @@ public class AlarmActivity extends AppCompatActivity {
     private Button snooze;
     private TextView countdown;
     private MediaPlayer player;
+    private AudioManager mAudioManager;
+    private int originalVolume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+
+        mAudioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
+        originalVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 
         dismissNotification(this);
 
@@ -50,7 +57,6 @@ public class AlarmActivity extends AppCompatActivity {
         long timeleft = FajrTime.getInstance().time.getTimeInMillis() - System.currentTimeMillis();
         countdown = (TextView) findViewById(R.id.countdown);
         new CountDownTimer(timeleft, 1000) {
-
             public void onTick(long millisUntilFinished) {
                 long hoursleft = millisUntilFinished / 1000 / 60 / 60;
                 long minutes = (millisUntilFinished - hoursleft * 1000 * 60 * 60) / 1000 / 60;
@@ -86,6 +92,7 @@ public class AlarmActivity extends AppCompatActivity {
             player.stop();
             player.release();
         }
+        mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, originalVolume, 0);
     }
 
     private void dismissNotification(Context context) {

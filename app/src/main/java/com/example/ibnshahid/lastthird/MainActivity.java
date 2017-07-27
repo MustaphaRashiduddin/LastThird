@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
 
     long fajrInstance() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, 1);
         cal.set(Calendar.HOUR_OF_DAY, 6);
         cal.set(Calendar.MINUTE, 0);
         return cal.getTimeInMillis();
@@ -92,6 +91,20 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         cal.set(Calendar.HOUR_OF_DAY, 20);
         cal.set(Calendar.MINUTE, 0);
         return cal.getTimeInMillis();
+    }
+
+    void adjustdates() {
+        maghribTime.set(Calendar.DATE ,Calendar.getInstance().get(Calendar.DATE));
+        FajrTime.time.set(Calendar.DATE ,Calendar.getInstance().get(Calendar.DATE));
+
+        int time_now = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) * 100 + Calendar.getInstance().get(Calendar.MINUTE);
+        int fajr_time = FajrTime.time.get(Calendar.HOUR_OF_DAY) * 100 + FajrTime.time.get(Calendar.MINUTE);
+        if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < 0 || time_now > fajr_time) {
+            FajrTime.getInstance().time.add(Calendar.DATE, 1);
+        } else {
+            maghribTime.add(Calendar.DATE, -1);
+        }
+        fajrTime = FajrTime.time;
     }
 
     SharedPreferences sp;
@@ -107,15 +120,16 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         Calendar tempMaghrib = Calendar.getInstance();
         tempMaghrib.setTimeInMillis(sp.getLong("maghribMillis", maghribInstance()));
 
-
         FajrTime.getInstance().time = Calendar.getInstance();
-        FajrTime.getInstance().time.add(Calendar.DATE, 1);
         FajrTime.getInstance().time.set(Calendar.HOUR_OF_DAY, fajrTime.get(Calendar.HOUR_OF_DAY));
         FajrTime.getInstance().time.set(Calendar.MINUTE, fajrTime.get(Calendar.MINUTE));
 
         maghribTime = Calendar.getInstance();
         maghribTime.set(Calendar.HOUR_OF_DAY, tempMaghrib.get(Calendar.HOUR_OF_DAY));
         maghribTime.set(Calendar.MINUTE, tempMaghrib.get(Calendar.MINUTE));
+
+        // adjust dates for fajr and maghrib calendars
+        adjustdates();
 
         fajrDisplay = (TextView) findViewById(R.id.tv_show_fajr_time);
         Button fajrDisplayTPDButton = (Button) findViewById(R.id.btn_pic_fajr_time);
@@ -142,9 +156,10 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         Button btnAlarm = (Button) findViewById(R.id.btn_set_alarm);
         btnAlarm.setOnClickListener(v -> {
             calcLastThird();
+            // assuming that tahajjud cannot be after 5 //TODO think of better condition
             if (calGetup.get(Calendar.HOUR_OF_DAY) > 5) {
                 Toast.makeText(this, "maghrib and fajr time configurations not possible", Toast.LENGTH_SHORT).show();
-                // Toast.makeText(this, "" + getTime.fn(calGetup), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "" + getTime.fn(calGetup), Toast.LENGTH_SHORT).show();
             }
             else {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
@@ -299,12 +314,11 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     } private String timeMode;
 
     TimePickerDialog.OnTimeSetListener fajrOnTimeSetListener = (view, hourOfDay, minute) -> {
-        fajrTime = Calendar.getInstance();
+        fajrTime = FajrTime.time;
         fajrTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
         fajrTime.set(Calendar.MINUTE, minute);
-        fajrTime.add(Calendar.DATE, 1);
         fajrDisplay.setText(getTime.fn(fajrTime));
-
+        adjustdates();
         FajrTime.getInstance().time = fajrTime;
     };
 

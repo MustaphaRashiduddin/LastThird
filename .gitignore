@@ -84,7 +84,11 @@ Temporary Items
 
 # Java class files
 *.class
+
+# sound resource files
 *.wav
+*.ogg
+*.mp3
 
 # Generated files
 bin/
