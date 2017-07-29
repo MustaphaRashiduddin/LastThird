@@ -60,7 +60,10 @@ public class AlarmActivity extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 long hoursleft = millisUntilFinished / 1000 / 60 / 60;
                 long minutes = (millisUntilFinished - hoursleft * 1000 * 60 * 60) / 1000 / 60;
-                countdown.setText("time remaining: " + hoursleft + ":" + minutes);
+                if (minutes / 10 == 0)
+                    countdown.setText("time remaining: " + hoursleft + ":0" + minutes);
+                else
+                    countdown.setText("time remaining: " + hoursleft + ":" + minutes);
             }
 
             public void onFinish() {
