@@ -91,9 +91,9 @@ public class AlarmActivity extends AppCompatActivity {
 
         alarmManager.cancel(pendingIntent);
 
-        if (player != null) {
+        if (player.isPlaying()){
             player.stop();
-            player.release();
+            player.reset();
         }
         mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, originalVolume, 0);
     }
