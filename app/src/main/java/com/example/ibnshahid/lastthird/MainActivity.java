@@ -157,11 +157,11 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         btnAlarm.setOnClickListener(v -> {
             calcLastThird();
             // assuming that tahajjud cannot be after 5 //TODO think of better condition
-            if (calGetup.get(Calendar.HOUR_OF_DAY) > 5) {
-                Toast.makeText(this, "maghrib and fajr time configurations not possible", Toast.LENGTH_SHORT).show();
-                Toast.makeText(this, "" + getTime.fn(calGetup), Toast.LENGTH_SHORT).show();
-            }
-            else {
+//            if (calGetup.get(Calendar.HOUR_OF_DAY) > 5) {
+//                Toast.makeText(this, "maghrib and fajr time configurations not possible", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "" + getTime.fn(calGetup), Toast.LENGTH_SHORT).show();
+//            }
+//            else {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
                 alertDialog.setTitle("Alarm");
                 alertDialog.setMessage("Do you want the system to set the time or yourself manually?");
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
                             manual.dismissOnPause(true);
                         });
                 alertDialog.show();
-            }
+//            }
         });
 
         Button btnCancelAlarm = (Button) findViewById(R.id.btn_cancel_alarm);

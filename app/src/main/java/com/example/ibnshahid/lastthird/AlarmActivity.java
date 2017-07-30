@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
-
 public class AlarmActivity extends AppCompatActivity {
 
     private Button cancel;
@@ -65,9 +64,7 @@ public class AlarmActivity extends AppCompatActivity {
                 else
                     countdown.setText("time remaining: " + hoursleft + ":" + minutes);
             }
-
-            public void onFinish() {
-                countdown.setText("IT'S FAJR TIME!");
+            public void onFinish() { countdown.setText("IT'S FAJR TIME!");
             }
         }.start();
         countdown.setText("" + FajrTime.getInstance().time.get(Calendar.HOUR_OF_DAY));
@@ -102,5 +99,4 @@ public class AlarmActivity extends AppCompatActivity {
         NotificationManager nMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         nMgr.cancel(2);
     }
-
 }
