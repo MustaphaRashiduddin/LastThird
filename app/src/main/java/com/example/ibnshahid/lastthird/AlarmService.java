@@ -41,6 +41,7 @@ public class AlarmService extends Service {
             notificationManager.cancel(2);
         } else {
             Intent alarm_intent = new Intent(this, AlarmActivity.class);
+            Utilities.playAlarm(this);
             startActivity(alarm_intent);
         }
 
