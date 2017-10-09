@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -35,6 +36,18 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     com.wdullaer.materialdatetimepicker.time.TimePickerDialog manual = null;
 
     public boolean alarmSet = false;
+    private int calcDayOfMonth(int hourOfDay, int minute)
+    {
+        Calendar now = Calendar.getInstance();
+        int hourNow = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int minuteNow = Calendar.getInstance().get(Calendar.MINUTE);
+        if (hourOfDay < hourNow) {
+            now.add(Calendar.DAY_OF_MONTH, 1);
+        } else if (hourOfDay == hourNow && minute < minuteNow) {
+            now.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return now.get(Calendar.DAY_OF_MONTH);
+    }
 
     @Override
     protected void onStop() {
@@ -46,12 +59,15 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         editor.commit();
     }
 
-    //    when manually setting the time within the constraints of the last third of the night and isha time
+    // when manually setting the time within the constraints of the last third of the night and isha time
     @Override
     public void onTimeSet(com.wdullaer.materialdatetimepicker.time.TimePickerDialog view, int hourOfDay, int minute, int second) {
         Calendar getup = Calendar.getInstance();
         getup.set(Calendar.YEAR, FajrTime.time.get(Calendar.YEAR));
-        getup.set(Calendar.DAY_OF_MONTH, FajrTime.time.get(Calendar.DAY_OF_MONTH));
+        int dayOfMonth = calcDayOfMonth(hourOfDay, minute);
+        Toast.makeText(this, "dayOfMonth: " + dayOfMonth, Toast.LENGTH_SHORT).show();
+//        getup.set(Calendar.DAY_OF_MONTH, FajrTime.time.get(Calendar.DAY_OF_MONTH));
+        getup.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         getup.set(Calendar.HOUR_OF_DAY, hourOfDay);
         getup.set(Calendar.MINUTE, minute);
         Utilities.setAlarm(this, getup);
@@ -146,8 +162,8 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
                         manual = com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(this,
                                         calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE),
                                         Utilities.getTime.equals(Utilities.getTime24));
-                        manual.setMinTime(calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE), 0);
-                        manual.setMaxTime(fajrTime.get(Calendar.HOUR_OF_DAY), fajrTime.get(Calendar.MINUTE), 0);
+//                        manual.setMinTime(calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE), 0);
+//                        manual.setMaxTime(fajrTime.get(Calendar.HOUR_OF_DAY), fajrTime.get(Calendar.MINUTE), 0);
                         manual.show(getFragmentManager(), "Timepickerdialog");
                         manual.dismissOnPause(true);
                     });

@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
+
 import java.util.Calendar;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -54,14 +56,14 @@ public class Utilities {
     }
 
     public static void setAlarm(Context context, Calendar calGetup) {
-            Intent intent = new Intent(context, AlarmReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
-            else
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
-            createNotification(context, calGetup);
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
+        else
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
+        createNotification(context, calGetup);
     }
 
     interface GetTimeInterface {

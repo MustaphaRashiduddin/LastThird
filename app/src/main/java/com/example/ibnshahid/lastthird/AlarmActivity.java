@@ -28,7 +28,7 @@ public class AlarmActivity extends AppCompatActivity {
         originalVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 
-        cancel = (Button) findViewById(R.id.btn_cancel);
+        cancel = (Button) findViewById(R.id.btn_stop);
         cancel.setOnClickListener(v -> {
             cancel();
         });
@@ -81,7 +81,8 @@ public class AlarmActivity extends AppCompatActivity {
                 else
                     countdown.setText("time remaining: " + hoursleft + ":" + minutes);
             }
-            public void onFinish() { countdown.setText("Tahajjud time is over");
+            public void onFinish() {
+                countdown.setText("Tahajjud time is over");
             }
         }.start();
         countdown.setText("" + FajrTime.getInstance().time.get(Calendar.HOUR_OF_DAY));
