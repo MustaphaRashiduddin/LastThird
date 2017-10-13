@@ -11,11 +11,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
 
 import java.util.Calendar;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
+import java.util.Vector;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -25,10 +32,12 @@ import static android.content.Context.ALARM_SERVICE;
 
 public class Utilities {
     private static void createNotification(Context context, Calendar time) {
+
+        String nameOfDay = time.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.notifcation)
-                .setContentTitle("Tahajjud alarm set")
-                .setContentText(getTime.fn(time))
+                .setContentTitle("[Next alarm]" + nameOfDay + " " + getTime.fn(time))
+//                .setContentText(getTime.fn(time))
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
         Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -59,10 +68,7 @@ public class Utilities {
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
-        else
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
         createNotification(context, calGetup);
     }
 

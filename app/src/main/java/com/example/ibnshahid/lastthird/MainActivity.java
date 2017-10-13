@@ -16,7 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -65,8 +64,6 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         Calendar getup = Calendar.getInstance();
         getup.set(Calendar.YEAR, FajrTime.time.get(Calendar.YEAR));
         int dayOfMonth = calcDayOfMonth(hourOfDay, minute);
-        Toast.makeText(this, "dayOfMonth: " + dayOfMonth, Toast.LENGTH_SHORT).show();
-//        getup.set(Calendar.DAY_OF_MONTH, FajrTime.time.get(Calendar.DAY_OF_MONTH));
         getup.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         getup.set(Calendar.HOUR_OF_DAY, hourOfDay);
         getup.set(Calendar.MINUTE, minute);
