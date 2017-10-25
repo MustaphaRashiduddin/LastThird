@@ -15,8 +15,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener {
@@ -156,13 +158,15 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
                     });
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "MANUAL",
                     (dialog, which) -> {
-                        manual = com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(this,
-                                        calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE),
-                                        Utilities.getTime.equals(Utilities.getTime24));
+//                        manual = com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(this,
+//                                        calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE),
+//                                        Utilities.getTime.equals(Utilities.getTime24));
 //                        manual.setMinTime(calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE), 0);
 //                        manual.setMaxTime(fajrTime.get(Calendar.HOUR_OF_DAY), fajrTime.get(Calendar.MINUTE), 0);
-                        manual.show(getFragmentManager(), "Timepickerdialog");
-                        manual.dismissOnPause(true);
+//                        manual.show(getFragmentManager(), "Timepickerdialog");
+//                        manual.dismissOnPause(true);
+                        Intent intent = new Intent(MainActivity.this, SetManualAlarmActivity.class);
+                        startActivity(intent);
                     });
             alertDialog.show();
         });
