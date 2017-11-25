@@ -34,7 +34,17 @@ public class AlarmsAdapter extends ArrayAdapter<ManualAlarmModel> {
         }
 
         TextView tvTime = (TextView) listItemView.findViewById(R.id.time);
-        tvTime.setText(data.get(position).time);
+        int hr = data.get(position).hr;
+        int min = data.get(position).min;
+//        Calendar cal = Calendar.getInstance();
+//        cal.set(Calendar.HOUR_OF_DAY, hr);
+//        cal.set(Calendar.MINUTE, min);
+        String time = Utilities.getTimeStr(hr, min);
+        tvTime.setText(time);
+//        maghribTime = Calendar.getInstance();
+//        maghribTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+//        maghribTime.set(Calendar.MINUTE, minute);
+//        tvTime.setText(data.get(position).time);
 
         return listItemView;
     }

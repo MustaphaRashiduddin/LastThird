@@ -88,6 +88,13 @@ public class Utilities {
         return dateFormat.format(cal.getTime());
     };
 
+    static String getTimeStr (int hr, int min) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, hr);
+        cal.set(Calendar.MINUTE, min);
+        return getTime.fn(cal);
+    }
+
     public static MediaPlayer player;
     public static void playAlarm(Context context) {
         dismissNotification(context);

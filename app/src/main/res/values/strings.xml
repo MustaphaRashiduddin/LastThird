@@ -3,6 +3,6 @@
     <string name="time_format">24 hour mode</string>
     <string name="action_about_us">About us</string>
     <string name="time_mode_24">"24 hour mode"</string>
-    <string name="time_mode_pm">"PM mode"</string>
+    <string name="time_mode_12">"AM/PM mode"</string>
     <string name="title_activity_alarm">AlarmActivity</string>
 </resources>

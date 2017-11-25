@@ -9,19 +9,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity implements com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener {
+public class MainActivity extends Base implements com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener {
 
     private TextView fajrDisplay = null;
     private TextView maghribDisplay = null;
@@ -29,12 +28,6 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     private Calendar fajrTime = Calendar.getInstance();
     private Calendar maghribTime = Calendar.getInstance();
     private Calendar calGetup = Calendar.getInstance();
-    private MenuItem miTimeMode = null;
-
-    private PendingIntent pendingIntent = null;
-    private Intent intent = null;
-    AlarmManager alarmManager = null;
-    com.wdullaer.materialdatetimepicker.time.TimePickerDialog manual = null;
 
     public boolean alarmSet = false;
     private int calcDayOfMonth(int hourOfDay, int minute)
@@ -53,6 +46,14 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
     @Override
     protected void onStop() {
         super.onStop();
+        SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putLong("fajrMillis", fajrTime.getTimeInMillis());
+        editor.putLong("maghribMillis", maghribTime.getTimeInMillis());
+        editor.commit();
+    }
+
+    private void savePrayerTimes() {
         SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putLong("fajrMillis", fajrTime.getTimeInMillis());
@@ -102,11 +103,21 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
 
     SharedPreferences sp;
 
+    private void setTimeMode() {
+        SharedPreferences sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
+        String timeMode = sp.getString("timeMode", getResources().getString(R.string.time_mode_24));
+        if (timeMode.equals(getResources().getString(R.string.time_mode_24))) {
+            Utilities.getTime = Utilities.getTime12;
+        } else {
+            Utilities.getTime = Utilities.getTime24;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Utilities.getTime = Utilities.getTime12;
+
+        setTimeMode();
 
         sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE);
         fajrTime.setTimeInMillis(sp.getLong("fajrMillis", fajrInstance()));
@@ -158,14 +169,11 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
                     });
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "MANUAL",
                     (dialog, which) -> {
-//                        manual = com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(this,
-//                                        calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE),
-//                                        Utilities.getTime.equals(Utilities.getTime24));
-//                        manual.setMinTime(calGetup.get(Calendar.HOUR_OF_DAY), calGetup.get(Calendar.MINUTE), 0);
-//                        manual.setMaxTime(fajrTime.get(Calendar.HOUR_OF_DAY), fajrTime.get(Calendar.MINUTE), 0);
-//                        manual.show(getFragmentManager(), "Timepickerdialog");
-//                        manual.dismissOnPause(true);
-                        Intent intent = new Intent(MainActivity.this, SetManualAlarmActivity.class);
+                        Intent intent = new Intent(MainActivity.this, SetManualAlarmListActivity.class);
+                        int hr = calGetup.get(Calendar.HOUR_OF_DAY);
+                        int min = calGetup.get(Calendar.MINUTE);
+                        intent.putExtra("hour", hr);
+                        intent.putExtra("minute", min);
                         startActivity(intent);
                     });
             alertDialog.show();
@@ -193,12 +201,16 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
 
             tvAlarmUnset();
         });
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        setTimeMode();
+        setAllTimeTextViews();
+        invalidateOptionsMenu();
+
+        // TODO we are going to deprecate below code
         alarmSet = sp.getBoolean("alarmSet", false);
         if (alarmSet) {
             tvLastThird.setText("Alarm set for " + Utilities.getTime.fn(calGetup));
@@ -209,30 +221,18 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-
-        miTimeMode = menu.findItem(R.id.time_mode);
-        if (timeMode != null) miTimeMode.setTitle(timeMode);
-
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        boolean invariant = super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.time_mode:
-                if (miTimeMode.getTitle().toString().equals(getString(R.string.time_mode_24))) {
-                    Utilities.getTime = Utilities.getTime24;
-                    miTimeMode.setTitle(R.string.time_mode_pm);
-                } else {
-                    Utilities.getTime = Utilities.getTime12;
-                    miTimeMode.setTitle(R.string.time_mode_24);
+                    setAllTimeTextViews();
+                    break;
                 }
-                setAllTimeTextViews();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+        return invariant;
     }
 
     @Override
@@ -243,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         outState.putString("last_third", tvLastThird.getText().toString());
         outState.putSerializable("fajrCal", fajrTime);
         outState.putSerializable("maghribCal", maghribTime);
-        outState.putString("timeMode", miTimeMode.getTitle().toString());
     }
 
     @Override
@@ -257,8 +256,8 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         tvLastThird.setText(lastThird);
         fajrTime = (Calendar) savedInstanceState.getSerializable("fajrCal");
         maghribTime = (Calendar) savedInstanceState.getSerializable("maghribCal");
-        timeMode = savedInstanceState.getString("timeMode");
-    } private String timeMode;
+        Toast.makeText(this, "Main: onRestoreInstanceState", Toast.LENGTH_SHORT).show();
+    }
 
     TimePickerDialog.OnTimeSetListener fajrOnTimeSetListener = (view, hourOfDay, minute) -> {
         fajrTime = FajrTime.time;
@@ -267,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         fajrDisplay.setText(Utilities.getTime.fn(fajrTime));
         adjustdates();
         FajrTime.getInstance().time = fajrTime;
+        savePrayerTimes();
     };
 
     TimePickerDialog.OnTimeSetListener maghribOnTimeSetListener = (view, hourOfDay, minute) -> {
@@ -274,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements com.wdullaer.mate
         maghribTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
         maghribTime.set(Calendar.MINUTE, minute);
         maghribDisplay.setText(Utilities.getTime.fn(maghribTime));
+        savePrayerTimes();
     };
 
     void setAllTimeTextViews() {

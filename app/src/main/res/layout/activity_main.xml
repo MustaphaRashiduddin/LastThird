@@ -31,13 +31,13 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="SET:TIME"/>
-        />
 
     <Button
         android:id="@+id/btn_set_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="set alarm"/>
+    />
 
     <TextView
         android:id="@+id/tv_last_third"
