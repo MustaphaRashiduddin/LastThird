@@ -2,7 +2,6 @@ package com.example.ibnshahid.lastthird;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.os.Build;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,14 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import java.util.Calendar;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
-import java.util.Vector;
 
 import static android.content.Context.ALARM_SERVICE;
 

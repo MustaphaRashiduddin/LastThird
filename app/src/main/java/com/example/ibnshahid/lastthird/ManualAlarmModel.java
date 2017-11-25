@@ -6,7 +6,6 @@ package com.example.ibnshahid.lastthird;
 
 public class ManualAlarmModel {
     public int pk;
-//    public String time;
     public int hr;
     public int min;
     public Boolean enabled;
@@ -22,7 +21,6 @@ public class ManualAlarmModel {
                             int mon, int tue, int wed, int thu, int fri,
                             int sat, int sun) {
         this.pk = pk;
-//        this.time = time;
         this.hr = hr;
         this.min = min;
         this.enabled = (enabled != 0);

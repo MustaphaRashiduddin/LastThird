@@ -58,39 +58,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else return true;
     }
 
-    public Boolean UpdateTimeFormat() {
-        ArrayList<ManualAlarmModel> manualAlarmModelArrayList = new ArrayList<>();
-        Cursor res = getAlarms();
-        if (res.getCount() == 0) {
-//            Toast.makeText(context, "no results", Toast.LENGTH_SHORT).show();
-        } else {
-            while (res.moveToNext()) { // I'm guessing this line moves one past -1 and then starts executing
-                int pk = res.getInt(0);
-//                String time = res.getString(1);
-                int hr = res.getInt(1);
-                int min = res.getInt(2);
-                int enabled = res.getInt(3);
-                int mon = res.getInt(4);
-                int tue = res.getInt(5);
-                int wed = res.getInt(6);
-                int thu = res.getInt(7);
-                int fri = res.getInt(8);
-                int sat = res.getInt(9);
-                int sun = res.getInt(10);
-                ManualAlarmModel manualAlarmModel = new ManualAlarmModel(pk, hr, min, enabled,
-                        mon, tue, wed, thu, fri, sat, sun);
-                manualAlarmModelArrayList.add(manualAlarmModel);
-            }
-        }
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        for (int i=0; i<manualAlarmModelArrayList.size(); i++) {
-//            ContentValues
-        }
-
-        return true;
-    }
-
     public Cursor getAlarms() {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.rawQuery("select * from alarms", null);

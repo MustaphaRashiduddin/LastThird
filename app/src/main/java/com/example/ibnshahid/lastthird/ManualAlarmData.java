@@ -21,7 +21,6 @@ public class ManualAlarmData {
         } else {
             while (res.moveToNext()) { // I'm guessing this line moves one past -1 and then starts executing
                 int pk = res.getInt(0);
-//                String time = res.getString(1);
                 int hr = res.getInt(1);
                 int min = res.getInt(2);
                 int enabled = res.getInt(3);

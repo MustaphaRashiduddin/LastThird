@@ -1,6 +1,5 @@
 package com.example.ibnshahid.lastthird;
 
-
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

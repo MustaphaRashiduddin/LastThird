@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -27,7 +26,6 @@ public class SetManualAlarmListActivity extends Base {
             Intent intent = new Intent(SetManualAlarmListActivity.this, SetManualAlarmActivity.class);
             startActivity(intent);
         });
-
     }
 
     @Override

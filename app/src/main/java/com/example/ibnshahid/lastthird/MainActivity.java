@@ -13,11 +13,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends Base implements com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener {
