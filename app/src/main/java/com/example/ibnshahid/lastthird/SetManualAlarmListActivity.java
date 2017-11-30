@@ -24,6 +24,7 @@ public class SetManualAlarmListActivity extends Base {
         Button addAlarm = (Button) findViewById(R.id.btn_add_alarm);
         addAlarm.setOnClickListener(v -> {
             Intent intent = new Intent(SetManualAlarmListActivity.this, SetManualAlarmActivity.class);
+            intent.putExtra("SET_DEFAULT_ALARM", true);
             startActivity(intent);
         });
     }
@@ -31,7 +32,7 @@ public class SetManualAlarmListActivity extends Base {
     @Override
     protected void onResume() {
         super.onResume();
-        ArrayList<ManualAlarmModel> data = ManualAlarmData.getData(this);
+        ArrayList<ManualAlarmModel> data = FetchAlarmData.allAlarms(this);
         adapter = new AlarmsAdapter(this, 0, data);
         ListView listView = (ListView) findViewById(R.id.ll_list);
         listView.setAdapter(adapter);

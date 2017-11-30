@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by ibnShahid on 06/05/2017.
@@ -40,9 +41,10 @@ public class AlarmService extends Service {
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.cancel(2);
         } else {
-            Intent alarm_intent = new Intent(this, AlarmActivity.class);
-            Utilities.playAlarm(this);
-            startActivity(alarm_intent);
+//            Intent alarm_intent = new Intent(this, AlarmActivity.class);
+//            Utilities.playAlarm(this);
+//            startActivity(alarm_intent);
+            Log.e("AlarmService", "onStartCommand");
         }
 
         return START_NOT_STICKY;

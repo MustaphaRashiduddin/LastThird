@@ -60,7 +60,8 @@ public class Utilities {
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, calGetup.getTimeInMillis(), pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), pendingIntent);
         createNotification(context, calGetup);
     }
 

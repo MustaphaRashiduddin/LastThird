@@ -1,5 +1,7 @@
 package com.example.ibnshahid.lastthird;
 
+import java.util.Calendar;
+
 /**
  * Created by ibnShahid on 24/10/2017.
  */
@@ -16,6 +18,20 @@ public class ManualAlarmModel {
     public Boolean fri;
     public Boolean sat;
     public Boolean sun;
+
+    public ManualAlarmModel() {
+        this.pk = -1; // invalid id
+        Calendar cal = Calendar.getInstance();
+        this.hr = cal.get(Calendar.HOUR_OF_DAY);
+        this.min = cal.get(Calendar.MINUTE);
+        this.mon = false;
+        this.tue = false;
+        this.wed = false;
+        this.thu = false;
+        this.fri = false;
+        this.sat = false;
+        this.sun = false;
+    }
 
     public ManualAlarmModel(int pk, int hr, int min, int enabled,
                             int mon, int tue, int wed, int thu, int fri,
