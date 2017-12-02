@@ -3,10 +3,12 @@ package com.example.ibnshahid.lastthird;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -16,32 +18,44 @@ import java.util.ArrayList;
 
 public class DaysDialog extends DialogFragment {
 
+
     LayoutInflater inflater;
     View view;
+    ManualAlarmModel manualAlarmModel;
+    DaysRepeatModelListWrapper wrapper = new DaysRepeatModelListWrapper();
+
+    private class DaysRepeatModelListWrapper {
+        public ArrayList<DaysRepeatModel> data;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         inflater = getActivity().getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_days, null);
 
-        ManualAlarmModel manualAlarmModel = ((SetManualAlarmActivity) getActivity()).manualAlarmModel;
-
-        ArrayList<DaysRepeatModel> data = new DaysRepeatData(manualAlarmModel).data();
-        DaysAdapter adapter = new DaysAdapter(getActivity(), 0, data);
-        ListView listView = (ListView) view.findViewById(R.id.ll_list);
-        listView.setAdapter(adapter);
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view).setPositiveButton("OK", (dialog, which) -> {
-            manualAlarmModel.mon = data.get(0).repeat;
-            manualAlarmModel.tue = data.get(1).repeat;
-            manualAlarmModel.wed = data.get(2).repeat;
-            manualAlarmModel.thu = data.get(3).repeat;
-            manualAlarmModel.fri = data.get(4).repeat;
-            manualAlarmModel.sat = data.get(5).repeat;
-            manualAlarmModel.sun = data.get(6).repeat;
-        }).setNegativeButton("Cancel", (dialog, which) -> { /* do nothing */ });
+            ManualAlarmModel trueModel = ((SetManualAlarmActivity) getActivity()).manualAlarmModel;
+            trueModel.set(manualAlarmModel);
+        }).setNegativeButton("Cancel", (dialog, which) -> onCancel(dialog));
 
         return builder.create();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        manualAlarmModel = ((SetManualAlarmActivity) getActivity()).shadowManualAlarmModel;
+        wrapper.data = new DaysRepeatData(manualAlarmModel).data();
+        DaysAdapter adapter = new DaysAdapter(getActivity(), 0, wrapper.data, manualAlarmModel);
+        ListView listView = (ListView) view.findViewById(R.id.ll_list);
+        listView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        manualAlarmModel.set(((SetManualAlarmActivity) getActivity()).manualAlarmModel);
+    }
+
 }

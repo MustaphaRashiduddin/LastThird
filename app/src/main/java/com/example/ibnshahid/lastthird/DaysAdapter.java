@@ -21,9 +21,11 @@ import java.util.ArrayList;
 public class DaysAdapter extends ArrayAdapter<DaysRepeatModel> {
 
     ArrayList<DaysRepeatModel> data;
-    public DaysAdapter(Activity activity, @LayoutRes int resource, ArrayList<DaysRepeatModel> data) {
+    ManualAlarmModel model;
+    public DaysAdapter(Activity activity, @LayoutRes int resource, ArrayList<DaysRepeatModel> data, ManualAlarmModel model) {
         super(activity, resource, data);
         this.data = data;
+        this.model = model;
     }
     @NonNull
     @Override
@@ -41,7 +43,32 @@ public class DaysAdapter extends ArrayAdapter<DaysRepeatModel> {
         tvDay.setText(day);
         cbRepeat.setChecked(repeat);
 
-        cbRepeat.setOnClickListener(v -> { data.get(position).repeat = !data.get(position).repeat; });
+        cbRepeat.setOnClickListener(v -> {
+            data.get(position).repeat = !data.get(position).repeat;
+            switch (position) { // I know it's too much coupling, but I ain't using this adapter elsewhere
+                case 0:
+                    model.mon = data.get(position).repeat;
+                    break;
+                case 1:
+                    model.tue = data.get(position).repeat;
+                    break;
+                case 2:
+                    model.wed = data.get(position).repeat;
+                    break;
+                case 3:
+                    model.thu = data.get(position).repeat;
+                    break;
+                case 4:
+                    model.fri = data.get(position).repeat;
+                    break;
+                case 5:
+                    model.sat = data.get(position).repeat;
+                    break;
+                case 6:
+                    model.sun = data.get(position).repeat;
+                    break;
+            }
+        });
 
         return listItemView;
     }

@@ -3,7 +3,6 @@ package com.example.ibnshahid.lastthird;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 

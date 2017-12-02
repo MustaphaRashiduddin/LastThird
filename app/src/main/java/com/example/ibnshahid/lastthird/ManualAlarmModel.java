@@ -33,6 +33,20 @@ public class ManualAlarmModel {
         this.sun = false;
     }
 
+    public ManualAlarmModel(ManualAlarmModel model) { // copy constructor
+        this.pk = model.pk;
+        this.hr = model.hr;
+        this.min = model.min;
+        this.enabled = model.enabled;
+        this.mon = model.mon;
+        this.tue = model.tue;
+        this.wed = model.wed;
+        this.thu = model.thu;
+        this.fri = model.fri;
+        this.sat = model.sat;
+        this.sun = model.sun;
+    }
+
     public ManualAlarmModel(int pk, int hr, int min, int enabled,
                             int mon, int tue, int wed, int thu, int fri,
                             int sat, int sun) {
@@ -47,5 +61,18 @@ public class ManualAlarmModel {
         this.fri = (fri != 0);
         this.sat = (sat != 0);
         this.sun = (sun != 0);
+    }
+
+    public void set(ManualAlarmModel model) {
+        this.pk = model.pk;
+        this.hr = model.hr;
+        this.min = model.min;
+        this.mon = model.mon;
+        this.tue = model.tue;
+        this.wed = model.wed;
+        this.thu = model.thu;
+        this.fri = model.fri;
+        this.sat = model.sat;
+        this.sun = model.sun;
     }
 }
