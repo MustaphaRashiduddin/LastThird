@@ -58,8 +58,8 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(v -> finish());
 
         android.app.TimePickerDialog.OnTimeSetListener timeSetListener = (view, hr, min) -> {
-            manualAlarmModel.hr = hr;
-            manualAlarmModel.min = min;
+            shadowManualAlarmModel.hr = hr;
+            shadowManualAlarmModel.min = min;
         };
 
         int ID = getIntent().getIntExtra("ID", -1);
@@ -73,7 +73,7 @@ public class SetManualAlarmActivity extends AppCompatActivity {
 
         Boolean is24Hour = Utilities.getTime == Utilities.getTime24;
         timeButton.setOnClickListener(v -> new android.app.TimePickerDialog(this, timeSetListener,
-                manualAlarmModel.hr, manualAlarmModel.min, is24Hour).show());
+                shadowManualAlarmModel.hr, shadowManualAlarmModel.min, is24Hour).show());
 
         repeatButton.setOnClickListener(v -> {
             DaysDialog dialog = new DaysDialog();
