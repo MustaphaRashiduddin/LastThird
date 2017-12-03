@@ -1,5 +1,6 @@
 package com.example.ibnshahid.lastthird;
 
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
@@ -37,11 +38,10 @@ public class SetManualAlarmActivity extends AppCompatActivity {
                         shadowManualAlarmModel.mon, shadowManualAlarmModel.tue, shadowManualAlarmModel.wed, shadowManualAlarmModel.thu,
                         shadowManualAlarmModel.fri, shadowManualAlarmModel.sat, shadowManualAlarmModel.sun);
             }
+            finish();
         });
 
-        cancelButton.setOnClickListener(v -> {
-            Toast.makeText(this, "cancelButton", Toast.LENGTH_SHORT).show();
-        });
+        cancelButton.setOnClickListener(v -> finish());
 
         android.app.TimePickerDialog.OnTimeSetListener timeSetListener = (view, hr, min) -> {
             manualAlarmModel.hr = hr;
