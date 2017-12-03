@@ -101,4 +101,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("enabled", enabled);
         db.update("alarms", cv, "id = "+id, null);
     }
+
+    public void deleteAlarm(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("alarms", "id = ?", new String[] {String.valueOf(id)});
+    }
 }

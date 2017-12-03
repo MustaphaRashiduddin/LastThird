@@ -1,8 +1,9 @@
 package com.example.ibnshahid.lastthird;
 
-import android.app.TimePickerDialog;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         Button timeButton = (Button) findViewById(R.id.btn_time);
         Button repeatButton = (Button) findViewById(R.id.btn_repeat);
         Button okButton = (Button) findViewById(R.id.btn_ok);
+        Button deleteButton = (Button) findViewById(R.id.btn_delete);
         Button cancelButton = (Button) findViewById(R.id.btn_cancel);
 
         Boolean SET_DEFAULT_ALARM = getIntent().getBooleanExtra("SET_DEFAULT_ALARM", true);
@@ -41,6 +43,18 @@ public class SetManualAlarmActivity extends AppCompatActivity {
             finish();
         });
 
+        deleteButton.setOnClickListener( (View v) -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Are you sure?");
+            builder.setMessage("This action will delete your alarm");
+            builder.setPositiveButton("OK", (dialog, which) -> {
+                db.deleteAlarm(manualAlarmModel.pk);
+                finish();
+            });
+            builder.setNegativeButton("CANCEL", (dialog, which) -> { /*no explicit action*/ });
+            builder.show();
+        });
+
         cancelButton.setOnClickListener(v -> finish());
 
         android.app.TimePickerDialog.OnTimeSetListener timeSetListener = (view, hr, min) -> {
@@ -51,10 +65,11 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         int ID = getIntent().getIntExtra("ID", -1);
         if (SET_DEFAULT_ALARM) {
             manualAlarmModel = new ManualAlarmModel();
+            deleteButton.setVisibility(View.GONE); // because we wanna delete *existing* alarms *only*
         } else {
             manualAlarmModel = FetchAlarmData.getAlarm(this, ID);
         }
-        shadowManualAlarmModel = new ManualAlarmModel(manualAlarmModel); // V. important
+        shadowManualAlarmModel = new ManualAlarmModel(manualAlarmModel);
 
         Boolean is24Hour = Utilities.getTime == Utilities.getTime24;
         timeButton.setOnClickListener(v -> new android.app.TimePickerDialog(this, timeSetListener,
