@@ -5,14 +5,18 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 public class SetManualAlarmActivity extends AppCompatActivity {
 
     protected ManualAlarmModel manualAlarmModel;
     protected ManualAlarmModel shadowManualAlarmModel; // to be manipulated in DaysDialog
+    TextView tvRepeat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,11 +25,15 @@ public class SetManualAlarmActivity extends AppCompatActivity {
 
         DatabaseHelper db = new DatabaseHelper(this);
 
+        // initializing buttons
         Button timeButton = (Button) findViewById(R.id.btn_time);
         Button repeatButton = (Button) findViewById(R.id.btn_repeat);
         Button okButton = (Button) findViewById(R.id.btn_ok);
         Button deleteButton = (Button) findViewById(R.id.btn_delete);
         Button cancelButton = (Button) findViewById(R.id.btn_cancel);
+
+        // initializing textviews
+        tvRepeat = (TextView) findViewById(R.id.tv_repeat);
 
         Boolean SET_DEFAULT_ALARM = getIntent().getBooleanExtra("SET_DEFAULT_ALARM", true);
         okButton.setOnClickListener(v -> {
@@ -81,6 +89,16 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         });
     }
 
+    static boolean isRepeat = false;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isRepeat)
+            tvRepeat.setText(FetchAlarmData.getDays(this, manualAlarmModel.pk));
+        else
+            tvRepeat.setText(getDays());
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -101,5 +119,27 @@ public class SetManualAlarmActivity extends AppCompatActivity {
 
         json = savedInstanceState.getString("SHADOW");
         shadowManualAlarmModel = gson.fromJson(json, ManualAlarmModel.class);
+    }
+
+    public String getDays() {
+        ArrayList<String> dayList = new ArrayList<>();
+        if (shadowManualAlarmModel.mon) dayList.add("Mon");
+        if (shadowManualAlarmModel.tue) dayList.add("Tue");
+        if (shadowManualAlarmModel.wed) dayList.add("Wed");
+        if (shadowManualAlarmModel.thu) dayList.add("Thu");
+        if (shadowManualAlarmModel.fri) dayList.add("Fri");
+        if (shadowManualAlarmModel.sat) dayList.add("Sat");
+        if (shadowManualAlarmModel.sun) dayList.add("Sun");
+
+        String days = "";
+        for (int i=0; i<dayList.size(); i++) {
+            if (i==0)
+                days += dayList.get(0);
+            else
+                days += ", " + dayList.get(i);
+        }
+
+        if (days.equals("")) return "Never";
+        return days;
     }
 }

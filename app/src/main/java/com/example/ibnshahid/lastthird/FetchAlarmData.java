@@ -56,4 +56,28 @@ public class FetchAlarmData {
         int sun = res.getInt(10);
         return new ManualAlarmModel(pk, hr, min, enabled, mon, tue, wed, thu, fri, sat, sun);
     }
+
+    public static String getDays(Context context, int id) {
+        ManualAlarmModel model = getAlarm(context, id);
+        ArrayList<String> dayList = new ArrayList<>();
+        if (model.mon) dayList.add("Mon");
+        if (model.tue) dayList.add("Tue");
+        if (model.wed) dayList.add("Wed");
+        if (model.thu) dayList.add("Thu");
+        if (model.fri) dayList.add("Fri");
+        if (model.sat) dayList.add("Sat");
+        if (model.sun) dayList.add("Sun");
+
+        String days = "";
+        for (int i=0; i<dayList.size(); i++) {
+            if (i==0)
+                days += dayList.get(0);
+            else
+                days += ", " + dayList.get(i);
+        }
+
+        if (days.equals("")) return "Never";
+        return days;
+    }
+
 }
