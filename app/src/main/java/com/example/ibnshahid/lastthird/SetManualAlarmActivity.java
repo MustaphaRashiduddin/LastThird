@@ -96,7 +96,7 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         if (!isRepeat)
             tvRepeat.setText(FetchAlarmData.getDays(this, manualAlarmModel.pk));
         else
-            tvRepeat.setText(getDays());
+            tvRepeat.setText(FetchAlarmData.getDays(shadowManualAlarmModel));
     }
 
     @Override
@@ -119,27 +119,5 @@ public class SetManualAlarmActivity extends AppCompatActivity {
 
         json = savedInstanceState.getString("SHADOW");
         shadowManualAlarmModel = gson.fromJson(json, ManualAlarmModel.class);
-    }
-
-    public String getDays() {
-        ArrayList<String> dayList = new ArrayList<>();
-        if (shadowManualAlarmModel.mon) dayList.add("Mon");
-        if (shadowManualAlarmModel.tue) dayList.add("Tue");
-        if (shadowManualAlarmModel.wed) dayList.add("Wed");
-        if (shadowManualAlarmModel.thu) dayList.add("Thu");
-        if (shadowManualAlarmModel.fri) dayList.add("Fri");
-        if (shadowManualAlarmModel.sat) dayList.add("Sat");
-        if (shadowManualAlarmModel.sun) dayList.add("Sun");
-
-        String days = "";
-        for (int i=0; i<dayList.size(); i++) {
-            if (i==0)
-                days += dayList.get(0);
-            else
-                days += ", " + dayList.get(i);
-        }
-
-        if (days.equals("")) return "Never";
-        return days;
     }
 }

@@ -59,6 +59,10 @@ public class FetchAlarmData {
 
     public static String getDays(Context context, int id) {
         ManualAlarmModel model = getAlarm(context, id);
+        return getDays(model);
+    }
+
+    public static String getDays(ManualAlarmModel model) {
         ArrayList<String> dayList = new ArrayList<>();
         if (model.mon) dayList.add("Mon");
         if (model.tue) dayList.add("Tue");
