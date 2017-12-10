@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -58,6 +59,9 @@ public class AlarmsAdapter extends ArrayAdapter<ManualAlarmModel> {
             DatabaseHelper db = new DatabaseHelper(context);
             db.updateEnabled(data.get(position).pk, data.get(position).enabled);
         });
+
+        TextView tvDays = (TextView) listItemView.findViewById(R.id.tv_days);
+        tvDays.setText(FetchAlarmData.getDays(getContext(), data.get(position).pk));
 
         return listItemView;
     }
