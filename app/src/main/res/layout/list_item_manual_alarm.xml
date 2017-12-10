@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?android:attr/selectableItemBackground"
     android:id="@+id/rootView"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:background="@android:drawable/list_selector_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -34,3 +33,5 @@
             android:text="hero" />
     </LinearLayout>
 </RelativeLayout>
+    <!--android:background="@android:drawable/list_selector_background"-->
+    <!--android:backgroundTint="@color/mdtp_button_selected"-->
