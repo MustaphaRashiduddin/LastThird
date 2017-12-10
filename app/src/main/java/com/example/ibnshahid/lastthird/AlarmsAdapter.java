@@ -3,13 +3,17 @@ package com.example.ibnshahid.lastthird;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,15 +48,15 @@ public class AlarmsAdapter extends ArrayAdapter<ManualAlarmModel> {
         String time = Utilities.getTimeStr(hr, min);
         tvTime.setText(time);
 
-        CheckBox cbEnabled = (CheckBox) listItemView.findViewById(R.id.cb_enabled);
-        cbEnabled.setChecked(data.get(position).enabled);
-
-        tvTime.setOnClickListener(v -> {
+        listItemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, SetManualAlarmActivity.class);
             intent.putExtra("ID", data.get(position).pk);
             intent.putExtra("SET_DEFAULT_ALARM", false);
             context.startActivity(intent);
         });
+
+        CheckBox cbEnabled = (CheckBox) listItemView.findViewById(R.id.cb_enabled);
+        cbEnabled.setChecked(data.get(position).enabled);
 
         cbEnabled.setOnClickListener(v -> {
             data.get(position).enabled = !data.get(position).enabled;
