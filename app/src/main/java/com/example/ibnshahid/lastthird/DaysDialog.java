@@ -38,7 +38,6 @@ public class DaysDialog extends DialogFragment {
             trueModel.set(manualAlarmModel);
             ((SetManualAlarmActivity) getActivity()).
                     tvRepeat.setText(FetchAlarmData.getDays(manualAlarmModel));
-            ((SetManualAlarmActivity) getActivity()).isRepeat = true;
         }).setNegativeButton("Cancel", (dialog, which) -> onCancel(dialog));
 
         return builder.create();

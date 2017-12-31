@@ -22,33 +22,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table alarms(id integer primary key, hr integer, min integer, enabled integer, " +
                 "mon integer, tue integer, wed integer, thu integer, fri integer, sat integer, sun integer)");
+
+        db.execSQL("create table alarm(id integer primary key, alarms_id integer, day integer)");
+        // alarms_id is the foreign key
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists alarms");
+        db.execSQL("drop table if exists alarm");
         onCreate(db);
     }
 
-    public Boolean setAlarm(int hr, int min) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("hr", hr);
-        contentValues.put("min", min);
-        contentValues.put("enabled", 1);
-        contentValues.put("mon", 0);
-        contentValues.put("tue", 0);
-        contentValues.put("wed", 0);
-        contentValues.put("thu", 0);
-        contentValues.put("fri", 0);
-        contentValues.put("sat", 0);
-        contentValues.put("sun", 0);
-        long result = db.insert("alarms", null, contentValues);
-        if (result == -1) return false;
-        else return true;
-    }
-
-    public Boolean setAlarm(int hr, int min, Boolean enabled, Boolean mon, Boolean tue, Boolean wed,
+    public Boolean setAlarm(int id, int hr, int min, Boolean enabled, Boolean mon, Boolean tue, Boolean wed,
                             Boolean thu, Boolean fri, Boolean sat, Boolean sun) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -63,8 +49,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("sat", sat);
         contentValues.put("sun", sun);
         long result = db.insert("alarms", null, contentValues);
+        setAlarm(db, id, sun, mon, tue, wed, thu, fri, sat);
         if (result == -1) return false;
         else return true;
+    }
+
+    void setAlarm(SQLiteDatabase db, int id, boolean... params) {
+        for (int i=0; i<params.length; i++) {
+            if (params[i]) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("alarms_id", id);
+                contentValues.put("day", i+1);
+                db.insert("alarm", null, contentValues);
+            } else {
+
+            }
+        }
     }
 
     public Cursor getAlarms() {
@@ -92,6 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("sat", sat);
         cv.put("sun", sun);
         db.update("alarms", cv, "id = "+id, null);
+        setAlarm(db, id, sun, mon, tue, wed, thu, fri, sat);
     }
 
     public void updateEnabled(int id, boolean enabled) {

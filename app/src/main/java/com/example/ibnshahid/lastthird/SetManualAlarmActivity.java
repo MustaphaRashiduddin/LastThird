@@ -39,7 +39,7 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         okButton.setOnClickListener(v -> {
             // update our database here
             if (SET_DEFAULT_ALARM) { // insert row
-                if (!db.setAlarm(shadowManualAlarmModel.hr, shadowManualAlarmModel.min, shadowManualAlarmModel.enabled,
+                if (!db.setAlarm(shadowManualAlarmModel.pk, shadowManualAlarmModel.hr, shadowManualAlarmModel.min, shadowManualAlarmModel.enabled,
                         shadowManualAlarmModel.mon, shadowManualAlarmModel.tue, shadowManualAlarmModel.wed, shadowManualAlarmModel.thu,
                         shadowManualAlarmModel.fri, shadowManualAlarmModel.sat, shadowManualAlarmModel.sun))
                     Toast.makeText(this, "insert not successful", Toast.LENGTH_SHORT).show();
@@ -89,14 +89,10 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         });
     }
 
-    static boolean isRepeat = false;
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isRepeat)
-            tvRepeat.setText(FetchAlarmData.getDays(this, manualAlarmModel.pk));
-        else
-            tvRepeat.setText(FetchAlarmData.getDays(shadowManualAlarmModel));
+        tvRepeat.setText(FetchAlarmData.getDays(shadowManualAlarmModel));
     }
 
     @Override

@@ -23,7 +23,7 @@ import static android.content.Context.ALARM_SERVICE;
  */
 
 public class Utilities {
-    private static void createNotification(Context context, Calendar time) {
+    public static void createNotification(Context context, Calendar time) {
 
         String nameOfDay = time.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
@@ -100,5 +100,14 @@ public class Utilities {
     private static void dismissNotification(Context context) {
         NotificationManager nMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         nMgr.cancel(2);
+    }
+
+    public static long timeLeft(ManualAlarmModel model) {
+        //TODO
+        Calendar tCal = Calendar.getInstance();
+        tCal.set(Calendar.HOUR_OF_DAY, model.hr);
+        tCal.set(Calendar.MINUTE, model.min);
+        tCal.set(Calendar.DAY_OF_WEEK, 3);
+        return 1;
     }
 }
