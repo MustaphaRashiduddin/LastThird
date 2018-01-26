@@ -20,22 +20,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table alarms(id integer primary key, hr integer, min integer, enabled integer, " +
+        db.execSQL("create table alarm_groups(id integer primary key, hr integer, min integer, enabled integer, " +
                 "mon integer, tue integer, wed integer, thu integer, fri integer, sat integer, sun integer)");
 
-        db.execSQL("create table alarm(id integer primary key, alarms_id integer, day integer)");
-        // alarms_id is the foreign key
+        db.execSQL("create table alarms(day integer not null, hr integer not null, min integer not null, primary key (day, hr, min))");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("drop table if exists alarm_groups");
         db.execSQL("drop table if exists alarms");
-        db.execSQL("drop table if exists alarm");
         onCreate(db);
     }
 
-    public Boolean setAlarm(int id, int hr, int min, Boolean enabled, Boolean mon, Boolean tue, Boolean wed,
-                            Boolean thu, Boolean fri, Boolean sat, Boolean sun) {
+    public Boolean setAlarmGroup(int id, int hr, int min, Boolean enabled, Boolean mon, Boolean tue, Boolean wed,
+                                 Boolean thu, Boolean fri, Boolean sat, Boolean sun) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("hr", hr);
@@ -48,13 +47,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("fri", fri);
         contentValues.put("sat", sat);
         contentValues.put("sun", sun);
-        long result = db.insert("alarms", null, contentValues);
-        setAlarm(db, id, sun, mon, tue, wed, thu, fri, sat);
+        long result = db.insert("alarm_groups", null, contentValues);
+        setAlarmGroup(db, id, sun, mon, tue, wed, thu, fri, sat);
         if (result == -1) return false;
         else return true;
     }
 
-    void setAlarm(SQLiteDatabase db, int id, boolean... params) {
+    public void setAlarmGroup(int day, int hr, int min) {
+//        insert into alarms (day, hr, min) values (1,5,53);
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("day", day);
+        contentValues.put("hr", hr);
+        contentValues.put("min", min);
+        db.insert("alarms", null, contentValues);
+    }
+
+    void setAlarmGroup(SQLiteDatabase db, int id, boolean... params) {
         for (int i=0; i<params.length; i++) {
             if (params[i]) {
                 ContentValues contentValues = new ContentValues();
@@ -69,16 +78,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getAlarms() {
         SQLiteDatabase db = getWritableDatabase();
-        return db.rawQuery("select * from alarms", null);
+        return db.rawQuery("select * from alarm_groups", null);
     }
 
     public Cursor getAlarm(int n) {
         SQLiteDatabase db = getWritableDatabase();
-        return db.rawQuery("select * from alarms where id = ?", new String[] {String.valueOf(n)});
+        return db.rawQuery("select * from alarm_groups where id = ?", new String[] {String.valueOf(n)});
     }
 
-    public void updateAlarm(int id, int hr, int min, boolean enabled, boolean mon, boolean tue,
-                            boolean wed, boolean thu, boolean fri, boolean sat, boolean sun) {
+    public void updateAlarmGroup(int id, int hr, int min, boolean enabled, boolean mon, boolean tue,
+                                 boolean wed, boolean thu, boolean fri, boolean sat, boolean sun) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("hr", hr);
@@ -91,19 +100,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("fri", fri);
         cv.put("sat", sat);
         cv.put("sun", sun);
-        db.update("alarms", cv, "id = "+id, null);
-        setAlarm(db, id, sun, mon, tue, wed, thu, fri, sat);
+        db.update("alarm_groups", cv, "id = "+id, null);
+        setAlarmGroup(db, id, sun, mon, tue, wed, thu, fri, sat);
     }
 
     public void updateEnabled(int id, boolean enabled) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("enabled", enabled);
-        db.update("alarms", cv, "id = "+id, null);
+        db.update("alarm_groups", cv, "id = "+id, null);
     }
 
     public void deleteAlarm(int id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete("alarms", "id = ?", new String[] {String.valueOf(id)});
+        db.delete("alarms_groups", "id = ?", new String[] {String.valueOf(id)});
+    }
+
+    public void deleteDayAlarm(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("day_alarm", "id = ?", new String[] {String.valueOf(id)});
     }
 }

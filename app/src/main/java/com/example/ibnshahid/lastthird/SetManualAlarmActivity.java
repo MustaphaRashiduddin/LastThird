@@ -10,8 +10,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-
 public class SetManualAlarmActivity extends AppCompatActivity {
 
     protected ManualAlarmModel manualAlarmModel;
@@ -39,12 +37,12 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         okButton.setOnClickListener(v -> {
             // update our database here
             if (SET_DEFAULT_ALARM) { // insert row
-                if (!db.setAlarm(shadowManualAlarmModel.pk, shadowManualAlarmModel.hr, shadowManualAlarmModel.min, shadowManualAlarmModel.enabled,
+                if (!db.setAlarmGroup(shadowManualAlarmModel.pk, shadowManualAlarmModel.hr, shadowManualAlarmModel.min, shadowManualAlarmModel.enabled,
                         shadowManualAlarmModel.mon, shadowManualAlarmModel.tue, shadowManualAlarmModel.wed, shadowManualAlarmModel.thu,
                         shadowManualAlarmModel.fri, shadowManualAlarmModel.sat, shadowManualAlarmModel.sun))
                     Toast.makeText(this, "insert not successful", Toast.LENGTH_SHORT).show();
             } else { // update row
-                db.updateAlarm(shadowManualAlarmModel.pk, shadowManualAlarmModel.hr, shadowManualAlarmModel.min, shadowManualAlarmModel.enabled,
+                db.updateAlarmGroup(shadowManualAlarmModel.pk, shadowManualAlarmModel.hr, shadowManualAlarmModel.min, shadowManualAlarmModel.enabled,
                         shadowManualAlarmModel.mon, shadowManualAlarmModel.tue, shadowManualAlarmModel.wed, shadowManualAlarmModel.thu,
                         shadowManualAlarmModel.fri, shadowManualAlarmModel.sat, shadowManualAlarmModel.sun);
             }
