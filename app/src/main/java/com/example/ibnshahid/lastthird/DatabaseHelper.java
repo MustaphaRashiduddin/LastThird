@@ -53,7 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else return true;
     }
 
-    public void setAlarmGroup(int day, int hr, int min) {
+    public void setAlarms(int day, int hr, int min) {
 //        insert into alarms (day, hr, min) values (1,5,53);
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();

@@ -32,7 +32,7 @@ public class SetManualAlarmListActivity extends Base {
     @Override
     protected void onResume() {
         super.onResume();
-        ArrayList<ManualAlarmModel> data = FetchAlarmData.allAlarms(this);
+        ArrayList<ManualAlarmGroupModel> data = FetchAlarmData.allAlarms(this);
         adapter = new AlarmsAdapter(this, 0, data);
         ListView listView = (ListView) findViewById(R.id.ll_list);
         listView.setAdapter(adapter);

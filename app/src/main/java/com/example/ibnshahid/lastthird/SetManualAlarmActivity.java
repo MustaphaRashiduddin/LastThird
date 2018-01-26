@@ -12,8 +12,8 @@ import com.google.gson.Gson;
 
 public class SetManualAlarmActivity extends AppCompatActivity {
 
-    protected ManualAlarmModel manualAlarmModel;
-    protected ManualAlarmModel shadowManualAlarmModel; // to be manipulated in DaysDialog
+    protected ManualAlarmGroupModel manualAlarmGroupModel;
+    protected ManualAlarmGroupModel shadowManualAlarmGroupModel; // to be manipulated in DaysDialog
     TextView tvRepeat;
 
     @Override
@@ -37,14 +37,14 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         okButton.setOnClickListener(v -> {
             // update our database here
             if (SET_DEFAULT_ALARM) { // insert row
-                if (!db.setAlarmGroup(shadowManualAlarmModel.pk, shadowManualAlarmModel.hr, shadowManualAlarmModel.min, shadowManualAlarmModel.enabled,
-                        shadowManualAlarmModel.mon, shadowManualAlarmModel.tue, shadowManualAlarmModel.wed, shadowManualAlarmModel.thu,
-                        shadowManualAlarmModel.fri, shadowManualAlarmModel.sat, shadowManualAlarmModel.sun))
+                if (!db.setAlarmGroup(shadowManualAlarmGroupModel.pk, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min, shadowManualAlarmGroupModel.enabled,
+                        shadowManualAlarmGroupModel.mon, shadowManualAlarmGroupModel.tue, shadowManualAlarmGroupModel.wed, shadowManualAlarmGroupModel.thu,
+                        shadowManualAlarmGroupModel.fri, shadowManualAlarmGroupModel.sat, shadowManualAlarmGroupModel.sun))
                     Toast.makeText(this, "insert not successful", Toast.LENGTH_SHORT).show();
             } else { // update row
-                db.updateAlarmGroup(shadowManualAlarmModel.pk, shadowManualAlarmModel.hr, shadowManualAlarmModel.min, shadowManualAlarmModel.enabled,
-                        shadowManualAlarmModel.mon, shadowManualAlarmModel.tue, shadowManualAlarmModel.wed, shadowManualAlarmModel.thu,
-                        shadowManualAlarmModel.fri, shadowManualAlarmModel.sat, shadowManualAlarmModel.sun);
+                db.updateAlarmGroup(shadowManualAlarmGroupModel.pk, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min, shadowManualAlarmGroupModel.enabled,
+                        shadowManualAlarmGroupModel.mon, shadowManualAlarmGroupModel.tue, shadowManualAlarmGroupModel.wed, shadowManualAlarmGroupModel.thu,
+                        shadowManualAlarmGroupModel.fri, shadowManualAlarmGroupModel.sat, shadowManualAlarmGroupModel.sun);
             }
             finish();
         });
@@ -54,7 +54,7 @@ public class SetManualAlarmActivity extends AppCompatActivity {
             builder.setTitle("Are you sure?");
             builder.setMessage("This action will delete your alarm");
             builder.setPositiveButton("OK", (dialog, which) -> {
-                db.deleteAlarm(manualAlarmModel.pk);
+                db.deleteAlarm(manualAlarmGroupModel.pk);
                 finish();
             });
             builder.setNegativeButton("CANCEL", (dialog, which) -> { /*no explicit action*/ });
@@ -64,22 +64,22 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(v -> finish());
 
         android.app.TimePickerDialog.OnTimeSetListener timeSetListener = (view, hr, min) -> {
-            shadowManualAlarmModel.hr = hr;
-            shadowManualAlarmModel.min = min;
+            shadowManualAlarmGroupModel.hr = hr;
+            shadowManualAlarmGroupModel.min = min;
         };
 
         int ID = getIntent().getIntExtra("ID", -1);
         if (SET_DEFAULT_ALARM) {
-            manualAlarmModel = new ManualAlarmModel();
+            manualAlarmGroupModel = new ManualAlarmGroupModel();
             deleteButton.setVisibility(View.GONE); // because we wanna delete *existing* alarms *only*
         } else {
-            manualAlarmModel = FetchAlarmData.getAlarm(this, ID);
+            manualAlarmGroupModel = FetchAlarmData.getAlarm(this, ID);
         }
-        shadowManualAlarmModel = new ManualAlarmModel(manualAlarmModel);
+        shadowManualAlarmGroupModel = new ManualAlarmGroupModel(manualAlarmGroupModel);
 
         Boolean is24Hour = Utilities.getTime == Utilities.getTime24;
         timeButton.setOnClickListener(v -> new android.app.TimePickerDialog(this, timeSetListener,
-                shadowManualAlarmModel.hr, shadowManualAlarmModel.min, is24Hour).show());
+                shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min, is24Hour).show());
 
         repeatButton.setOnClickListener(v -> {
             DaysDialog dialog = new DaysDialog();
@@ -90,17 +90,17 @@ public class SetManualAlarmActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        tvRepeat.setText(FetchAlarmData.getDays(shadowManualAlarmModel));
+        tvRepeat.setText(FetchAlarmData.getDays(shadowManualAlarmGroupModel));
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Gson gson = new Gson();
-        String json = gson.toJson(manualAlarmModel);
+        String json = gson.toJson(manualAlarmGroupModel);
         outState.putString("MANUAL_ALARM_MODEL", json);
 
-        json = gson.toJson(shadowManualAlarmModel);
+        json = gson.toJson(shadowManualAlarmGroupModel);
         outState.putString("SHADOW", json);
     }
 
@@ -109,9 +109,9 @@ public class SetManualAlarmActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         Gson gson = new Gson();
         String json = savedInstanceState.getString("MANUAL_ALARM_MODEL");
-        manualAlarmModel = gson.fromJson(json, ManualAlarmModel.class);
+        manualAlarmGroupModel = gson.fromJson(json, ManualAlarmGroupModel.class);
 
         json = savedInstanceState.getString("SHADOW");
-        shadowManualAlarmModel = gson.fromJson(json, ManualAlarmModel.class);
+        shadowManualAlarmGroupModel = gson.fromJson(json, ManualAlarmGroupModel.class);
     }
 }

@@ -6,7 +6,7 @@ import java.util.Calendar;
  * Created by ibnShahid on 24/10/2017.
  */
 
-public class ManualAlarmModel {
+public class ManualAlarmGroupModel {
     public int pk;
     public int hr;
     public int min;
@@ -19,7 +19,7 @@ public class ManualAlarmModel {
     public Boolean sat;
     public Boolean sun;
 
-    public ManualAlarmModel() {
+    public ManualAlarmGroupModel() {
         this.pk = -1; // invalid id
         Calendar cal = Calendar.getInstance();
         this.hr = cal.get(Calendar.HOUR_OF_DAY);
@@ -33,7 +33,7 @@ public class ManualAlarmModel {
         this.sun = false;
     }
 
-    public ManualAlarmModel(ManualAlarmModel model) { // copy constructor
+    public ManualAlarmGroupModel(ManualAlarmGroupModel model) { // copy constructor
         this.pk = model.pk;
         this.hr = model.hr;
         this.min = model.min;
@@ -47,9 +47,9 @@ public class ManualAlarmModel {
         this.sun = model.sun;
     }
 
-    public ManualAlarmModel(int pk, int hr, int min, int enabled,
-                            int mon, int tue, int wed, int thu, int fri,
-                            int sat, int sun) {
+    public ManualAlarmGroupModel(int pk, int hr, int min, int enabled,
+                                 int mon, int tue, int wed, int thu, int fri,
+                                 int sat, int sun) {
         this.pk = pk;
         this.hr = hr;
         this.min = min;
@@ -63,7 +63,7 @@ public class ManualAlarmModel {
         this.sun = (sun != 0);
     }
 
-    public void set(ManualAlarmModel model) {
+    public void set(ManualAlarmGroupModel model) {
         this.pk = model.pk;
         this.hr = model.hr;
         this.min = model.min;

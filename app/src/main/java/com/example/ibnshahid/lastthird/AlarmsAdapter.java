@@ -19,11 +19,11 @@ import java.util.ArrayList;
  * Created by ibnShahid on 20/10/2017.
  */
 
-public class AlarmsAdapter extends ArrayAdapter<ManualAlarmModel> {
+public class AlarmsAdapter extends ArrayAdapter<ManualAlarmGroupModel> {
 
     Context context;
-    ArrayList<ManualAlarmModel> data;
-    public AlarmsAdapter(Activity activity, @LayoutRes int resource, ArrayList<ManualAlarmModel> data) {
+    ArrayList<ManualAlarmGroupModel> data;
+    public AlarmsAdapter(Activity activity, @LayoutRes int resource, ArrayList<ManualAlarmGroupModel> data) {
         super(activity, resource, data);
         this.data = data;
         context = activity;

@@ -11,8 +11,8 @@ import java.util.ArrayList;
  */
 
 public class FetchAlarmData {
-    public static ArrayList<ManualAlarmModel> allAlarms(Context context) {
-        ArrayList<ManualAlarmModel> manualAlarmModelArrayList = new ArrayList<>();
+    public static ArrayList<ManualAlarmGroupModel> allAlarms(Context context) {
+        ArrayList<ManualAlarmGroupModel> manualAlarmModelArrayList = new ArrayList<>();
 
         DatabaseHelper db = new DatabaseHelper(context);
         Cursor res = db.getAlarms();
@@ -31,7 +31,7 @@ public class FetchAlarmData {
                 int fri = res.getInt(8);
                 int sat = res.getInt(9);
                 int sun = res.getInt(10);
-                ManualAlarmModel manualAlarmModel = new ManualAlarmModel(pk, hr, min, enabled,
+                ManualAlarmGroupModel manualAlarmModel = new ManualAlarmGroupModel(pk, hr, min, enabled,
                         mon, tue, wed, thu, fri, sat, sun);
                 manualAlarmModelArrayList.add(manualAlarmModel);
             }
@@ -39,7 +39,7 @@ public class FetchAlarmData {
         return manualAlarmModelArrayList;
     }
 
-    public static ManualAlarmModel getAlarm(Context context, int id) {
+    public static ManualAlarmGroupModel getAlarm(Context context, int id) {
         DatabaseHelper db = new DatabaseHelper(context);
         Cursor res = db.getAlarm(id);
         res.moveToNext();
@@ -54,15 +54,15 @@ public class FetchAlarmData {
         int fri = res.getInt(8);
         int sat = res.getInt(9);
         int sun = res.getInt(10);
-        return new ManualAlarmModel(pk, hr, min, enabled, mon, tue, wed, thu, fri, sat, sun);
+        return new ManualAlarmGroupModel(pk, hr, min, enabled, mon, tue, wed, thu, fri, sat, sun);
     }
 
     public static String getDays(Context context, int id) {
-        ManualAlarmModel model = getAlarm(context, id);
+        ManualAlarmGroupModel model = getAlarm(context, id);
         return getDays(model);
     }
 
-    public static String getDays(ManualAlarmModel model) {
+    public static String getDays(ManualAlarmGroupModel model) {
         ArrayList<String> dayList = new ArrayList<>();
         if (model.mon) dayList.add("Mon");
         if (model.tue) dayList.add("Tue");

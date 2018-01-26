@@ -102,7 +102,7 @@ public class Utilities {
         nMgr.cancel(2);
     }
 
-    public static long timeLeft(ManualAlarmModel model) {
+    public static long timeLeft(ManualAlarmGroupModel model) {
         //TODO
         Calendar tCal = Calendar.getInstance();
         tCal.set(Calendar.HOUR_OF_DAY, model.hr);

@@ -20,8 +20,8 @@ import java.util.ArrayList;
 public class DaysAdapter extends ArrayAdapter<DaysRepeatModel> {
 
     ArrayList<DaysRepeatModel> data;
-    ManualAlarmModel model;
-    public DaysAdapter(Activity activity, @LayoutRes int resource, ArrayList<DaysRepeatModel> data, ManualAlarmModel model) {
+    ManualAlarmGroupModel model;
+    public DaysAdapter(Activity activity, @LayoutRes int resource, ArrayList<DaysRepeatModel> data, ManualAlarmGroupModel model) {
         super(activity, resource, data);
         this.data = data;
         this.model = model;

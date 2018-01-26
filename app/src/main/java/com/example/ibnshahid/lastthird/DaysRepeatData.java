@@ -27,7 +27,7 @@ public class DaysRepeatData {
         return daysRepeat;
     }
 
-    DaysRepeatData(ManualAlarmModel model) {
+    DaysRepeatData(ManualAlarmGroupModel model) {
         DaysRepeatModel day1 = new DaysRepeatModel("Monday", model.mon);
         DaysRepeatModel day2 = new DaysRepeatModel("Tuesday", model.tue);
         DaysRepeatModel day3 = new DaysRepeatModel("Wednesday", model.wed);

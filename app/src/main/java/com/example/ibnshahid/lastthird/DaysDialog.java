@@ -20,7 +20,7 @@ public class DaysDialog extends DialogFragment {
 
     LayoutInflater inflater;
     View view;
-    ManualAlarmModel manualAlarmModel;
+    ManualAlarmGroupModel manualAlarmModel;
     DaysRepeatModelListWrapper wrapper = new DaysRepeatModelListWrapper();
 
     private class DaysRepeatModelListWrapper {
@@ -34,7 +34,7 @@ public class DaysDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view).setPositiveButton("OK", (dialog, which) -> {
-            ManualAlarmModel trueModel = ((SetManualAlarmActivity) getActivity()).manualAlarmModel;
+            ManualAlarmGroupModel trueModel = ((SetManualAlarmActivity) getActivity()).manualAlarmGroupModel;
             trueModel.set(manualAlarmModel);
             ((SetManualAlarmActivity) getActivity()).
                     tvRepeat.setText(FetchAlarmData.getDays(manualAlarmModel));
@@ -46,7 +46,7 @@ public class DaysDialog extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        manualAlarmModel = ((SetManualAlarmActivity) getActivity()).shadowManualAlarmModel;
+        manualAlarmModel = ((SetManualAlarmActivity) getActivity()).shadowManualAlarmGroupModel;
         wrapper.data = new DaysRepeatData(manualAlarmModel).data();
         DaysAdapter adapter = new DaysAdapter(getActivity(), 0, wrapper.data, manualAlarmModel);
         ListView listView = (ListView) view.findViewById(R.id.ll_list);
@@ -56,7 +56,7 @@ public class DaysDialog extends DialogFragment {
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
-        manualAlarmModel.set(((SetManualAlarmActivity) getActivity()).manualAlarmModel);
+        manualAlarmModel.set(((SetManualAlarmActivity) getActivity()).manualAlarmGroupModel);
     }
 
 }
