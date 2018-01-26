@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-public class SetManualAlarmActivity extends AppCompatActivity {
+public class SetManualAlarmGroupActivity extends AppCompatActivity {
 
     protected ManualAlarmGroupModel manualAlarmGroupModel;
     protected ManualAlarmGroupModel shadowManualAlarmGroupModel; // to be manipulated in DaysDialog
@@ -19,7 +19,7 @@ public class SetManualAlarmActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_set_manual_alarm);
+        setContentView(R.layout.activity_set_manual_alarm_group);
 
         DatabaseHelper db = new DatabaseHelper(this);
 

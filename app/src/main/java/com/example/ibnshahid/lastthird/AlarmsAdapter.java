@@ -34,7 +34,7 @@ public class AlarmsAdapter extends ArrayAdapter<ManualAlarmGroupModel> {
         // Check if the existing view is being reused, otherwise inflate the view
         View listItemView = convertView;
         if (listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_manual_alarm, parent, false);
+            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_manual_alarm_group, parent, false);
         }
 
         TextView tvTime = (TextView) listItemView.findViewById(R.id.time);
@@ -44,7 +44,7 @@ public class AlarmsAdapter extends ArrayAdapter<ManualAlarmGroupModel> {
         tvTime.setText(time);
 
         listItemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, SetManualAlarmActivity.class);
+            Intent intent = new Intent(context, SetManualAlarmGroupActivity.class);
             intent.putExtra("ID", data.get(position).pk);
             intent.putExtra("SET_DEFAULT_ALARM", false);
             context.startActivity(intent);

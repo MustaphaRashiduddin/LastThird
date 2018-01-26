@@ -167,7 +167,7 @@ public class MainActivity extends Base implements com.wdullaer.materialdatetimep
                     });
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "MANUAL",
                     (dialog, which) -> {
-                        Intent intent = new Intent(MainActivity.this, SetManualAlarmListActivity.class);
+                        Intent intent = new Intent(MainActivity.this, SetManualAlarmGroupListActivity.class);
                         int hr = calGetup.get(Calendar.HOUR_OF_DAY);
                         int min = calGetup.get(Calendar.MINUTE);
                         intent.putExtra("hour", hr);

@@ -12,18 +12,18 @@ import java.util.ArrayList;
  * Created by ibnShahid on 20/10/2017.
  */
 
-public class SetManualAlarmListActivity extends Base {
+public class SetManualAlarmGroupListActivity extends Base {
 
     private AlarmsAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_set_manual_alarm_list);
+        setContentView(R.layout.activity_set_manual_alarm_group_list);
 
         Button addAlarm = (Button) findViewById(R.id.btn_add_alarm);
         addAlarm.setOnClickListener(v -> {
-            Intent intent = new Intent(SetManualAlarmListActivity.this, SetManualAlarmActivity.class);
+            Intent intent = new Intent(SetManualAlarmGroupListActivity.this, SetManualAlarmGroupActivity.class);
             intent.putExtra("SET_DEFAULT_ALARM", true);
             startActivity(intent);
         });

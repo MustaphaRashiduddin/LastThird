@@ -31,10 +31,10 @@
         </activity>
 
         <activity
-            android:name=".SetManualAlarmListActivity">
+            android:name=".SetManualAlarmGroupListActivity">
         </activity>
 
-        <activity android:name=".SetManualAlarmActivity"></activity>
+        <activity android:name=".SetManualAlarmGroupActivity"></activity>
 
     </application>
 
