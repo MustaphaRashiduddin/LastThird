@@ -92,19 +92,19 @@ public class SetManualAlarmGroupActivity extends AppCompatActivity {
 
     void updateAlarms(DatabaseHelper db) {
         if (shadowManualAlarmGroupModel.mon)
-            db.setAlarms(0, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
+            db.setAlarm(0, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.tue)
-            db.setAlarms(1, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
+            db.setAlarm(1, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.wed)
-            db.setAlarms(2, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
+            db.setAlarm(2, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.thu)
-            db.setAlarms(3, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
+            db.setAlarm(3, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.fri)
-            db.setAlarms(4, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
+            db.setAlarm(4, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.sat)
-            db.setAlarms(5, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
+            db.setAlarm(5, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.sun)
-            db.setAlarms(6, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
+            db.setAlarm(6, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
     }
 
     @Override
