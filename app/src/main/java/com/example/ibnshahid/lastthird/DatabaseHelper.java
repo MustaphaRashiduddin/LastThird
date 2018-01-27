@@ -48,7 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("sat", sat);
         contentValues.put("sun", sun);
         long result = db.insert("alarm_groups", null, contentValues);
-        setAlarmGroup(db, id, sun, mon, tue, wed, thu, fri, sat);
+//        setAlarmGroup(db, id, sun, mon, tue, wed, thu, fri, sat);
         db.close();
         if (result == -1) return false;
         else return true;
@@ -65,18 +65,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    void setAlarmGroup(SQLiteDatabase db, int id, boolean... params) {
-        for (int i=0; i<params.length; i++) {
-            if (params[i]) {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put("alarms_id", id);
-                contentValues.put("day", i+1);
-                db.insert("alarm", null, contentValues);
-            } else {
-
-            }
-        }
-    }
+//    void setAlarmGroup(SQLiteDatabase db, int id, boolean... params) {
+//        for (int i=0; i<params.length; i++) {
+//            if (params[i]) {
+//                ContentValues contentValues = new ContentValues();
+//                contentValues.put("alarms_id", id);
+//                contentValues.put("day", i+1);
+//                db.insert("alarm", null, contentValues);
+//            } else {
+//
+//            }
+//        }
+//    }
 
     public Cursor getAlarms() {
         SQLiteDatabase db = getWritableDatabase();
@@ -103,7 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("sat", sat);
         cv.put("sun", sun);
         db.update("alarm_groups", cv, "id = "+id, null);
-        setAlarmGroup(db, id, sun, mon, tue, wed, thu, fri, sat);
+//        setAlarmGroup(db, id, sun, mon, tue, wed, thu, fri, sat);
         db.close();
     }
 
@@ -121,8 +121,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void deleteDayAlarm(int id) {
+    public void deleteAlarm(int id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete("day_alarm", "id = ?", new String[] {String.valueOf(id)});
+        db.delete("alarms", "id = ?", new String[] {String.valueOf(id)});
+        db.close();
     }
 }
