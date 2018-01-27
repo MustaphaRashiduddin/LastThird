@@ -49,12 +49,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("sun", sun);
         long result = db.insert("alarm_groups", null, contentValues);
         setAlarmGroup(db, id, sun, mon, tue, wed, thu, fri, sat);
+        db.close();
         if (result == -1) return false;
         else return true;
     }
 
     public void setAlarm(int day, int hr, int min) {
-//        insert into alarms (day, hr, min) values (1,5,53);
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("day", day);
@@ -63,6 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert("alarms", null, contentValues);
         db.close();
     }
+
 
     void setAlarmGroup(SQLiteDatabase db, int id, boolean... params) {
         for (int i=0; i<params.length; i++) {
@@ -75,7 +76,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             }
         }
-        db.close();
     }
 
     public Cursor getAlarms() {
@@ -104,6 +104,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("sun", sun);
         db.update("alarm_groups", cv, "id = "+id, null);
         setAlarmGroup(db, id, sun, mon, tue, wed, thu, fri, sat);
+        db.close();
     }
 
     public void updateEnabled(int id, boolean enabled) {
@@ -111,11 +112,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("enabled", enabled);
         db.update("alarm_groups", cv, "id = "+id, null);
+        db.close();
     }
 
-    public void deleteAlarm(int id) {
+    public void deleteAlarmGroup(int id) {
         SQLiteDatabase db = getWritableDatabase();
         db.delete("alarms_groups", "id = ?", new String[] {String.valueOf(id)});
+        db.close();
     }
 
     public void deleteDayAlarm(int id) {

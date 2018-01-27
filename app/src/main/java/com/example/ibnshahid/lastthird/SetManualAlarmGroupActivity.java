@@ -57,7 +57,7 @@ public class SetManualAlarmGroupActivity extends AppCompatActivity {
             builder.setTitle("Are you sure?");
             builder.setMessage("This action will delete your alarm");
             builder.setPositiveButton("OK", (dialog, which) -> {
-                db.deleteAlarm(manualAlarmGroupModel.pk);
+                db.deleteAlarmGroup(manualAlarmGroupModel.pk);
                 finish();
             });
             builder.setNegativeButton("CANCEL", (dialog, which) -> { /*no explicit action*/ });
