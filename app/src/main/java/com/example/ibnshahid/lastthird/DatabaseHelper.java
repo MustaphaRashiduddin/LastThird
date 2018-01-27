@@ -61,6 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("hr", hr);
         contentValues.put("min", min);
         db.insert("alarms", null, contentValues);
+        db.close();
     }
 
     void setAlarmGroup(SQLiteDatabase db, int id, boolean... params) {
@@ -74,6 +75,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             }
         }
+        db.close();
     }
 
     public Cursor getAlarms() {
