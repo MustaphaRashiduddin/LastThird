@@ -91,7 +91,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteAlarmGroup(int id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete("alarms_groups", "id = ?", new String[] {String.valueOf(id)});
+        db.delete("alarm_groups", "id = ?", new String[] {String.valueOf(id)});
+        db.execSQL("delete from alarms where alarm_group_id = ?", new String[] {String.valueOf(id)});
         db.close();
     }
 
