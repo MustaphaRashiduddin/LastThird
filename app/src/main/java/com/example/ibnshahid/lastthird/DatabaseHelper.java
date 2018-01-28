@@ -46,6 +46,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void deleteAlarm(int day, int hour, int min) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("delete from alarms where (day = ? and hr = ? and min = ?)",
+                new String[] {String.valueOf(day), String.valueOf(hour), String.valueOf(min)});
+        db.close();
+    }
+
     public Cursor getAlarms() {
         SQLiteDatabase db = getWritableDatabase();
         return db.rawQuery("select * from alarm_groups", null);
@@ -85,12 +92,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteAlarmGroup(int id) {
         SQLiteDatabase db = getWritableDatabase();
         db.delete("alarms_groups", "id = ?", new String[] {String.valueOf(id)});
-        db.close();
-    }
-
-    public void deleteAlarm(int id) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete("alarms", "id = ?", new String[] {String.valueOf(id)});
         db.close();
     }
 

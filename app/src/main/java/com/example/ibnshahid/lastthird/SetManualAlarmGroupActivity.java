@@ -96,18 +96,32 @@ public class SetManualAlarmGroupActivity extends AppCompatActivity {
     void updateAlarms(DatabaseHelper db) {
         if (shadowManualAlarmGroupModel.mon)
             db.setAlarm(0, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min, shadowManualAlarmGroupModel.pk);
+        else
+            db.deleteAlarm(0, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.tue)
             db.setAlarm(1, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min, shadowManualAlarmGroupModel.pk);
+        else
+            db.deleteAlarm(1, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.wed)
             db.setAlarm(2, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min, shadowManualAlarmGroupModel.pk);
+        else
+            db.deleteAlarm(2, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.thu)
             db.setAlarm(3, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min, shadowManualAlarmGroupModel.pk);
+        else
+            db.deleteAlarm(3, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.fri)
             db.setAlarm(4, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min, shadowManualAlarmGroupModel.pk);
+        else
+            db.deleteAlarm(4, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.sat)
             db.setAlarm(5, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min, shadowManualAlarmGroupModel.pk);
+        else
+            db.deleteAlarm(5, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
         if (shadowManualAlarmGroupModel.sun)
             db.setAlarm(6, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min, shadowManualAlarmGroupModel.pk);
+        else
+            db.deleteAlarm(6, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min);
     }
 
     @Override
