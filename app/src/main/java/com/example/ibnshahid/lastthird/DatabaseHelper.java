@@ -63,21 +63,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery("select * from alarm_groups where id = ?", new String[] {String.valueOf(n)});
     }
 
-    public void updateAlarmGroup(int id, int hr, int min, boolean enabled, boolean mon, boolean tue,
-                                 boolean wed, boolean thu, boolean fri, boolean sat, boolean sun) {
+    public void updateAlarmGroup(ManualAlarmGroupModel m) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("hr", hr);
-        cv.put("min", min);
-        cv.put("enabled", enabled);
-        cv.put("mon", mon);
-        cv.put("tue", tue);
-        cv.put("wed", wed);
-        cv.put("thu", thu);
-        cv.put("fri", fri);
-        cv.put("sat", sat);
-        cv.put("sun", sun);
-        db.update("alarm_groups", cv, "id = "+id, null);
+        cv.put("hr", m.hr);
+        cv.put("min", m.min);
+        cv.put("enabled", m.enabled);
+        cv.put("mon", m.mon);
+        cv.put("tue", m.tue);
+        cv.put("wed", m.wed);
+        cv.put("thu", m.thu);
+        cv.put("fri", m.fri);
+        cv.put("sat", m.sat);
+        cv.put("sun", m.sun);
+        db.update("alarm_groups", cv, "id = "+m.pk, null);
         db.close();
     }
 
@@ -96,20 +95,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public boolean setAlarmGroup(int hr, int min, Boolean mon, Boolean tue, Boolean wed, Boolean thu,
-                           Boolean fri, Boolean sat, Boolean sun, ManualAlarmGroupModel m) {
+    public boolean setAlarmGroup(ManualAlarmGroupModel m) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("hr", hr);
-        contentValues.put("min", min);
+        contentValues.put("hr", m.hr);
+        contentValues.put("min", m.min);
         contentValues.put("enabled", 1);
-        contentValues.put("mon", mon);
-        contentValues.put("tue", tue);
-        contentValues.put("wed", wed);
-        contentValues.put("thu", thu);
-        contentValues.put("fri", fri);
-        contentValues.put("sat", sat);
-        contentValues.put("sun", sun);
+        contentValues.put("mon", m.mon);
+        contentValues.put("tue", m.tue);
+        contentValues.put("wed", m.wed);
+        contentValues.put("thu", m.thu);
+        contentValues.put("fri", m.fri);
+        contentValues.put("sat", m.sat);
+        contentValues.put("sun", m.sun);
         long result = db.insert("alarm_groups", null, contentValues);
 
         final String MY_QUERY = "SELECT last_insert_rowid()";

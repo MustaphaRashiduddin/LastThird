@@ -37,19 +37,12 @@ public class SetManualAlarmGroupActivity extends AppCompatActivity {
         okButton.setOnClickListener(v -> {
             // update our database here
             if (SET_DEFAULT_ALARM) { // insert row
-                if (!db.setAlarmGroup(shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min,
-                        shadowManualAlarmGroupModel.mon, shadowManualAlarmGroupModel.tue, shadowManualAlarmGroupModel.wed,
-                        shadowManualAlarmGroupModel.thu, shadowManualAlarmGroupModel.fri, shadowManualAlarmGroupModel.sat,
-                        shadowManualAlarmGroupModel.sun, shadowManualAlarmGroupModel)) {
+                if (!db.setAlarmGroup(shadowManualAlarmGroupModel))
                     Toast.makeText(this, "insert not successful", Toast.LENGTH_SHORT).show();
-                } else {
+                else
                     updateAlarms(db);
-                }
             } else { // update row
-                db.updateAlarmGroup(shadowManualAlarmGroupModel.pk, shadowManualAlarmGroupModel.hr, shadowManualAlarmGroupModel.min,
-                        shadowManualAlarmGroupModel.enabled, shadowManualAlarmGroupModel.mon, shadowManualAlarmGroupModel.tue,
-                        shadowManualAlarmGroupModel.wed, shadowManualAlarmGroupModel.thu, shadowManualAlarmGroupModel.fri,
-                        shadowManualAlarmGroupModel.sat, shadowManualAlarmGroupModel.sun);
+                db.updateAlarmGroup(shadowManualAlarmGroupModel);
                 updateAlarms(db);
             }
             finish();
