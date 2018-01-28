@@ -23,7 +23,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table alarm_groups(id integer primary key, hr integer, min integer, enabled integer, " +
                 "mon integer, tue integer, wed integer, thu integer, fri integer, sat integer, sun integer)");
 
-        db.execSQL("create table alarms(day integer not null, hr integer not null, min integer not null, primary key (day, hr, min))");
+        db.execSQL("create table alarms(day integer not null, hr integer not null, min integer not null," +
+                " alarm_group_id integer, primary key (day, hr, min), foreign key(alarm_group_id)" +
+                " references alarm_groups(id))");
     }
 
     @Override
@@ -33,50 +35,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public Boolean setAlarmGroup(int id, int hr, int min, Boolean enabled, Boolean mon, Boolean tue, Boolean wed,
-                                 Boolean thu, Boolean fri, Boolean sat, Boolean sun) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("hr", hr);
-        contentValues.put("min", min);
-        contentValues.put("enabled", 1);
-        contentValues.put("mon", mon);
-        contentValues.put("tue", tue);
-        contentValues.put("wed", wed);
-        contentValues.put("thu", thu);
-        contentValues.put("fri", fri);
-        contentValues.put("sat", sat);
-        contentValues.put("sun", sun);
-        long result = db.insert("alarm_groups", null, contentValues);
-//        setAlarmGroup(db, id, sun, mon, tue, wed, thu, fri, sat);
-        db.close();
-        if (result == -1) return false;
-        else return true;
-    }
-
-    public void setAlarm(int day, int hr, int min) {
+    public void setAlarm(int day, int hr, int min, int fk) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("day", day);
         contentValues.put("hr", hr);
         contentValues.put("min", min);
+        contentValues.put("alarm_group_id", fk);
         db.insert("alarms", null, contentValues);
         db.close();
     }
-
-
-//    void setAlarmGroup(SQLiteDatabase db, int id, boolean... params) {
-//        for (int i=0; i<params.length; i++) {
-//            if (params[i]) {
-//                ContentValues contentValues = new ContentValues();
-//                contentValues.put("alarms_id", id);
-//                contentValues.put("day", i+1);
-//                db.insert("alarm", null, contentValues);
-//            } else {
-//
-//            }
-//        }
-//    }
 
     public Cursor getAlarms() {
         SQLiteDatabase db = getWritableDatabase();
@@ -103,7 +71,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("sat", sat);
         cv.put("sun", sun);
         db.update("alarm_groups", cv, "id = "+id, null);
-//        setAlarmGroup(db, id, sun, mon, tue, wed, thu, fri, sat);
         db.close();
     }
 
@@ -125,5 +92,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.delete("alarms", "id = ?", new String[] {String.valueOf(id)});
         db.close();
+    }
+
+    public boolean setAlarmGroup(int hr, int min, Boolean mon, Boolean tue, Boolean wed, Boolean thu,
+                           Boolean fri, Boolean sat, Boolean sun, ManualAlarmGroupModel m) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("hr", hr);
+        contentValues.put("min", min);
+        contentValues.put("enabled", 1);
+        contentValues.put("mon", mon);
+        contentValues.put("tue", tue);
+        contentValues.put("wed", wed);
+        contentValues.put("thu", thu);
+        contentValues.put("fri", fri);
+        contentValues.put("sat", sat);
+        contentValues.put("sun", sun);
+        long result = db.insert("alarm_groups", null, contentValues);
+
+        final String MY_QUERY = "SELECT last_insert_rowid()";
+        Cursor cur = db.rawQuery(MY_QUERY, null);
+        cur.moveToFirst();
+        int ID = cur.getInt(0);
+        cur.close();
+        db.close();
+        m.pk = ID;
+
+        if (result == -1) return false;
+        else return true;
     }
 }
