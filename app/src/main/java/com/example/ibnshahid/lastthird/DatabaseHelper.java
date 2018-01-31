@@ -24,7 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "mon integer, tue integer, wed integer, thu integer, fri integer, sat integer, sun integer)");
 
         db.execSQL("create table alarms(day integer not null, hr integer not null, min integer not null," +
-                " alarm_group_id integer, primary key (day, hr, min), foreign key(alarm_group_id)" +
+                " alarm_group_id integer, primary key (day, hr, min, alarm_group_id), foreign key(alarm_group_id)" +
                 " references alarm_groups(id))");
     }
 
@@ -46,10 +46,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void deleteAlarm(int day, int hour, int min) {
+    public void deleteAlarm(int day, int hour, int min, int fk) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("delete from alarms where (day = ? and hr = ? and min = ?)",
-                new String[] {String.valueOf(day), String.valueOf(hour), String.valueOf(min)});
+        db.execSQL("delete from alarms where (day = ? and hr = ? and min = ? and alarm_group_id = ?)",
+                new String[] {String.valueOf(day), String.valueOf(hour), String.valueOf(min), String.valueOf(fk)});
         db.close();
     }
 
